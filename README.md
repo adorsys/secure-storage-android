@@ -75,6 +75,11 @@ SecurePreferences.clearAllValues(Context);
 
 Everything about the cryptographic keys such as generating, maintaining and usage is handled internally by the module, so you do not need to worry about it.
 
+### Contributors:
+[@drilonreqica](https://github.com/drilonreqica)
+
+[@itsmortoncornelius](https://github.com/itsmortoncornelius)
+
 ### Want to know more:
 
 These links cover security aspect of the android keystore :
@@ -87,4 +92,6 @@ http://www.androidauthority.com/use-android-keystore-store-passwords-sensitive-i
 This link covers security aspect of the android storage :
 https://developer.android.com/guide/topics/data/data-storage.html
 http://stackoverflow.com/a/26077852/3392276
+
+
 
