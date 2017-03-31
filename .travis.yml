@@ -1,0 +1,21 @@
+language: android
+jdk: oraclejdk8
+# branches:
+#   only:
+#   - master
+android:
+  components:
+  - tools
+  - platform-tools
+  - android-25
+  - build-tools-25.0.2
+  - extra-android-m2repository
+  - extra-google-m2repository
+  - extra-android-support
+  - extra-google-google_play_services
+  sudo: false
+  licenses:
+  - android-sdk-preview-license-.+
+  - android-sdk-license-.+
+  - google-gdk-license-.+
+  - intel-android-extra-license.+
