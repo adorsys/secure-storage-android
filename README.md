@@ -2,6 +2,8 @@
 
 ## Storing Credentials Securely on Android Devices
 
+[![Build Status](https://travis-ci.org/adorsys/secure-storage-android.svg?branch=master)](https://travis-ci.org/adorsys/secure-storage-android)
+
 ### Introduction
 
 Storing Credentials securely on a Device is a must.
