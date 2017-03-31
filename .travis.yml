@@ -1,9 +1,9 @@
 language: android
 jdk: oraclejdk8
- branches:
-   only:
-   - master
-   - develop
+branches:
+  only:
+  - master
+  - develop
 android:
   components:
   - tools
