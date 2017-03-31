@@ -212,10 +212,12 @@ class KeystoreTool {
 
             KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(
                     KEY_ALIAS, KeyProperties.PURPOSE_DECRYPT)
+                    .setKeySize(1024)
                     .setKeyValidityStart(start.getTime())
                     .setKeyValidityEnd(end.getTime())
                     .setUserAuthenticationRequired(false)
-                    .setCertificateSerialNumber(BigInteger.ONE)
+                    .setBlockModes(KeyProperties.BLOCK_MODE_ECB)
+                    .setCertificateSerialNumber(BigInteger.TEN)
                     .setCertificateSubject(new X500Principal(KEY_X500PRINCIPAL))
                     .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                     .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
@@ -244,7 +246,7 @@ class KeystoreTool {
             KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
                     .setAlias(KEY_ALIAS)
                     .setSubject(new X500Principal(KEY_X500PRINCIPAL))
-                    .setSerialNumber(BigInteger.ONE)
+                    .setSerialNumber(BigInteger.TEN)
                     .setStartDate(start.getTime())
                     .setEndDate(end.getTime())
                     .build();
