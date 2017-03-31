@@ -86,6 +86,7 @@ Everything about the cryptographic keys such as generating, maintaining and usag
 
 These links cover security aspect of the android keystore :
 https://developer.android.com/training/articles/keystore.html#SecurityFeatures
+https://source.android.com/security/keystore/
 https://codingquestion.blogspot.de/2016/09/how-to-use-android-keystore-api-with.html
 http://nelenkov.blogspot.de/2012/05/storing-application-secrets-in-androids.html
 http://nelenkov.blogspot.de/2015/06/keystore-redesign-in-android-m.html
