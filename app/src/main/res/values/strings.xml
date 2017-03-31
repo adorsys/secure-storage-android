@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Secure Device Storage Test</string>
+    <string name="message_encrypted_decrypted">Message Before Encryption: %1$s\n\n
+    MESSAGE WAS ENCRYPTED, NOW DECRYPTING.\n\n
+    Message After Decryption: %2$s</string>
+    <string name="text_to_encrypt">Text to Encrypt</string>
+    <string name="button_encrypt">Encrypt</string>
+    <string name="button_generate_encrypt">Generate Key and Start Encryption</string>
+    <string name="button_clear_preferences"><![CDATA[Clear Preferences & Delete KeyPair]]></string>
+</resources>
