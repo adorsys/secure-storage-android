@@ -1,4 +1,3 @@
-BRANCH="master"
 PROJECT_VERSION="$(./gradlew -q pV)"
 
     # Is this not a build which was triggered by setting a new tag?
