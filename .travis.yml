@@ -20,3 +20,10 @@ android:
   - android-sdk-license-.+
   - google-gdk-license-.+
   - intel-android-extra-license.+
+  cache:
+    directories:
+      - $HOME/.gradle/caches/2.8
+      - $HOME/.gradle/caches/jars-1
+      - $HOME/.gradle/daemon
+      - $HOME/.gradle/native
+      - $HOME/.gradle/wrapper
