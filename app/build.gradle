@@ -7,8 +7,8 @@ android {
         applicationId "de.adorsys.android.securestoragetest"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 1
-        versionName "0.0.1"
+        versionCode versionCode
+        versionName "${versionName}"
     }
     buildTypes {
         release {

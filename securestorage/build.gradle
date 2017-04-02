@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
 
 android {
     compileSdkVersion 25
@@ -7,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 1
-        versionName "0.0.1"
+        versionCode versionCode
+        versionName "${versionName}"
 
     }
     buildTypes {
@@ -23,3 +24,30 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:25.3.1'
 }
+
+ext {
+    bintrayRepo = 'adorsys'
+    bintrayName = 'secure-storage'
+
+    publishedGroupId = 'de.adorsys.android'
+    libraryName = 'secure-storage'
+    artifact = 'secure-storage'
+
+    libraryDescription = 'secure-storage'
+
+    siteUrl = 'https://www.adorsys.de/'
+    gitUrl = 'https://github.com/adorsys/secure-storage-android.git'
+
+    libraryVersion = "${versionName}"
+
+    developerId = 'andev'
+    developerName = 'Andev Adorsys'
+    developerEmail = 'adorsys.andev@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+apply from: 'https://raw.githubusercontent.com/adorsys/jcenter-distribution/master/installv.gradle'
+apply from: 'https://raw.githubusercontent.com/adorsys/jcenter-distribution/master/bintrayv.gradle'
