@@ -28,6 +28,6 @@ android:
     - $HOME/.gradle/native
     - $HOME/.gradle/wrapper
 after_success:
-  - ./set-tags.sh
+  - ./bintray-upload.sh
 
 
