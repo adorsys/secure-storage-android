@@ -27,13 +27,7 @@ android:
     - $HOME/.gradle/daemon
     - $HOME/.gradle/native
     - $HOME/.gradle/wrapper
-before_deploy:
+after_success:
   - ./upload-to-bintray.sh
-deploy:
-  provider: bintray
-  file: securestorage/build/poms/pom-default.xml
-  user: andev
-  on:
-      all_branches: true
-  key:
-    secure: a87Vv0qX/AGsBtuY6r8lUg2P1wPMt6fqi7ly/4lBILdAIrom8ao9b91EKW2bzNVBm66jelse1wQZNl0mPRfKml1XXLR/Zouzsiw8HljON1JYw7v25VHoSyNX0Di+OswNLYQ+k+uHW6ylsY9C0JcF68zauzWF3FmVJgOVWXpdT+KLWsPTyE14SE2SXrFftahBj8kkQDvFuEGLwONEk32uaSWJz6SHdpc3lOdU/rxoRaajLtLfQwSIFLd4Ez4SwJ+fNpmFk/0x3J7QbW94BeYWY2CU6OAawkpGKoEY5Daf9ZWl4jQOrsZNoymG93qulGMpQ3lIM2KQhp3fqSPJrKYiFA1z0bG9cS3oP4bbfKGhJdS/lj443vrQK6CRriq5C5ed0/l7CgCgWgvVlmU8qQV8XNs0VWq5u40Wgwtli8oqePHJB/FH3beZ2/7Cwb+4GIUUiMNLZg5MR310n3I6Aa7kMZFSIo76z/XhtbUzkPMHziKLrvQPmsQyHVRfie3jvGcXVQ8AR1PGAGAuXFJImnisMgDImuWkTiLmQreLZMa6S0z4KwvO6muDeB0k9HD4VEBVXeqoO5P7j74rJhJ70qAY14fghWv4uuepSy5LGgyIWEf4cBjucbdCuf3gESDapj3CzuYqIdClg9lVMRQGcZXuaQ1GRIM3nvJa+VfOVj6KGq0=
+
+
