@@ -27,6 +27,8 @@ android:
     - $HOME/.gradle/daemon
     - $HOME/.gradle/native
     - $HOME/.gradle/wrapper
+before_deploy:
+  - ./upload-to-bintray.sh
 deploy:
   provider: bintray
   file: securestorage/build/poms/pom-default.xml
