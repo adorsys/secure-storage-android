@@ -3,8 +3,6 @@ package de.adorsys.android.securestorage;
 import android.content.Context;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -134,11 +132,8 @@ class KeystoreTool {
     static void generateKeyPair(@NonNull Context context) throws CryptoException {
         // Create new key if needed
         if (!keyPairExists()) {
-            if (Build.VERSION.SDK_INT >= M) {
-                generateMarshmallowKeyPair();
-            } else if (Build.VERSION.SDK_INT < M
-                    && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                generateJellyBeanKeyPair(context);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                generateAsymmetricKeyPair(context);
             } else {
                 Log.e(KeystoreTool.class.getName(), context.getString(R.string.message_supported_api));
                 throw new CryptoException(context.getString(R.string.message_supported_api), null);
@@ -203,41 +198,8 @@ class KeystoreTool {
         }
     }
 
-    @RequiresApi(M)
-    private static void generateMarshmallowKeyPair() throws CryptoException {
-        try {
-            Calendar start = Calendar.getInstance();
-            Calendar end = Calendar.getInstance();
-            end.add(Calendar.YEAR, 99);
-
-            KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(
-                    KEY_ALIAS, KeyProperties.PURPOSE_DECRYPT)
-                    .setKeySize(1024)
-                    .setKeyValidityStart(start.getTime())
-                    .setKeyValidityEnd(end.getTime())
-                    .setUserAuthenticationRequired(false)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_ECB)
-                    .setCertificateSerialNumber(BigInteger.TEN)
-                    .setCertificateSubject(new X500Principal(KEY_X500PRINCIPAL))
-                    .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                    .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
-                    .build();
-
-            KeyPairGenerator generator
-                    = KeyPairGenerator.getInstance(KEY_ENCRYPTION_ALGORITHM, KEY_KEYSTORE_NAME);
-            generator.initialize(spec);
-
-            generator.generateKeyPair();
-        } catch (NoSuchAlgorithmException
-                | NoSuchProviderException
-                | InvalidAlgorithmParameterException e) {
-            throw new CryptoException(e.getMessage(), e);
-        }
-    }
-
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private static void generateJellyBeanKeyPair(@NonNull Context context) throws CryptoException {
+    private static void generateAsymmetricKeyPair(@NonNull Context context) throws CryptoException {
         try {
             Calendar start = Calendar.getInstance();
             Calendar end = Calendar.getInstance();
