@@ -1,6 +1,7 @@
 package de.adorsys.android.securestorage;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,6 +29,7 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -198,9 +201,19 @@ class KeystoreTool {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private static boolean isRTL(@NonNull Context context) {
+        Configuration config = context.getResources().getConfiguration();
+        return config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+    }
+
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private static void generateAsymmetricKeyPair(@NonNull Context context) throws CryptoException {
         try {
+            if (isRTL(context)) {
+                Locale.setDefault(Locale.US);
+            }
+
             Calendar start = Calendar.getInstance();
             Calendar end = Calendar.getInstance();
             end.add(Calendar.YEAR, 99);
