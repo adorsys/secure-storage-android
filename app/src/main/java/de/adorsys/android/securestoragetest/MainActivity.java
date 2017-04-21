@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import de.adorsys.android.securestorage.SecurePreferences;
+import de.adorsys.android.securestoragelibrary.SecurePreferences;
 
 /**
  * @author Drilon Reçica
