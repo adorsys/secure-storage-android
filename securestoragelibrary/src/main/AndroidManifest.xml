@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.adorsys.android.securestorage">
+    package="de.adorsys.android.securestoragelibrary">
 
     <application
         android:allowBackup="false"

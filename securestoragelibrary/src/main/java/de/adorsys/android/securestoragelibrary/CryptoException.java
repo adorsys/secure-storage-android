@@ -1,4 +1,4 @@
-package de.adorsys.android.securestorage;
+package de.adorsys.android.securestoragelibrary;
 
 public class CryptoException extends Exception {
     public CryptoException(String detailMessage, Throwable cause) {

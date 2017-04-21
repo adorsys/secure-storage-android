@@ -1,4 +1,4 @@
-package de.adorsys.android.securestorage;
+package de.adorsys.android.securestoragelibrary;
 
 import android.content.Context;
 import android.content.res.Configuration;
