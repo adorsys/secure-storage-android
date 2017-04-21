@@ -15,9 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--keepclasseswithmembers class de.adorsys.android.securestorage.SecurePreferences {
+-keepclasseswithmembers class de.adorsys.android.securestoragelibrary.SecurePreferences {
     static <fields>;
     static <methods>;
 }
 
--keep class de.adorsys.android.securestorage.CryptoException
+-keep class de.adorsys.android.securestoragelibrary.CryptoException
