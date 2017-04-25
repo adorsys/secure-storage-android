@@ -28,7 +28,7 @@ To support more devices we have used the Assymetric key generation, which in the
 Add the module to your apps build.gradle:
 
 ```golang
-compile project(':securedevicestorage')
+compile 'de.adorsys.android:securestoragelibrary:0.0.1'
 ```
 
 To store a string value in our __SecurePreferences__ you have to call:
