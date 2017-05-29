@@ -72,6 +72,11 @@ SecurePreferences.getFloatValue("KEY", Context);
 SecurePreferences.getLongValue("KEY", Context);
 ```
 
+You can also remove an entry from the SecurePreferences
+```java
+SecurePreferences.removeValue("KEY", Context);
+```
+
 There also is a method for clearing the SecurePreferences and deleting the KeyPair.
 To do that call:
 ```java
