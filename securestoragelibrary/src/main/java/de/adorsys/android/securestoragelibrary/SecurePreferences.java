@@ -92,6 +92,10 @@ public class SecurePreferences {
         return Integer.parseInt(getStringValue(key, context, String.valueOf(defValue)));
     }
 
+    public static void removeValue(@NonNull String key, @NonNull Context context) {
+        removeSecureValue(key, context);
+    }
+
 
     public static void clearAllValues(@NonNull Context context) throws CryptoException {
         if (KeystoreTool.keyPairExists()) {
@@ -112,6 +116,13 @@ public class SecurePreferences {
         SharedPreferences preferences = context
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         return preferences.getString(key, null);
+    }
+
+    @SuppressLint("ApplySharedPref")
+    private static void removeSecureValue(@NonNull String key, @NonNull Context context) {
+        SharedPreferences preferences = context
+                .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        preferences.edit().remove(key).commit();
     }
 
     @SuppressLint({"CommitPrefEdits", "ApplySharedPref"})
