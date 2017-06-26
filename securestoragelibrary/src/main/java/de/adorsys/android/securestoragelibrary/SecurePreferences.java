@@ -84,11 +84,11 @@ public class SecurePreferences {
         return Float.parseFloat(getStringValue(key, context, String.valueOf(defValue)));
     }
 
-    public static float getLongValue(@NonNull String key, @NonNull Context context, long defValue) {
+    public static long getLongValue(@NonNull String key, @NonNull Context context, long defValue) {
         return Long.parseLong(getStringValue(key, context, String.valueOf(defValue)));
     }
 
-    public static float getIntValue(@NonNull String key, @NonNull Context context, int defValue) {
+    public static int getIntValue(@NonNull String key, @NonNull Context context, int defValue) {
         return Integer.parseInt(getStringValue(key, context, String.valueOf(defValue)));
     }
 
