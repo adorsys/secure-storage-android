@@ -10,6 +10,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -59,6 +62,16 @@ public class SecurePreferences {
         setValue(key, String.valueOf(value), context);
     }
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public static void setValue(@NonNull String key, Set<String> value,
+                                @NonNull Context context) throws CryptoException {
+        setValue(key + "_cnt", String.valueOf(value.size()), context);
+
+        int i = 0;
+        for(String s : value) {
+            setValue(key + "_" + (i++), s, context);
+        }
+    }
 
     @Nullable
     public static String getStringValue(@NonNull String key,
@@ -90,6 +103,21 @@ public class SecurePreferences {
 
     public static int getIntValue(@NonNull String key, @NonNull Context context, int defValue) {
         return Integer.parseInt(getStringValue(key, context, String.valueOf(defValue)));
+    }
+
+    public static Set<String> getStringSetValue(@NonNull String key, @NonNull Context context, Set<String> defValue) {
+        int size = getIntValue(key + "_cnt", context, -1);
+
+        if(size == -1) {
+            return defValue;
+        }
+
+        Set<String> res = new HashSet<>(size);
+        for(int i = 0; i < size; i++) {
+            res.add(getStringValue(key + "_" + i, context, ""));
+        }
+
+        return res;
     }
 
     public static void removeValue(@NonNull String key, @NonNull Context context) {
