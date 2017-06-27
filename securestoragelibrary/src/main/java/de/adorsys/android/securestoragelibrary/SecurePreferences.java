@@ -21,6 +21,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class SecurePreferences {
     private static final String KEY_SHARED_PREFERENCES_NAME = "SecurePreferences";
+    private static final String KEY_SET_COUNT_POSTFIX = "_count";
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static void setValue(@NonNull String key,
@@ -63,12 +64,12 @@ public class SecurePreferences {
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public static void setValue(@NonNull String key, Set<String> value,
+    public static void setValue(@NonNull String key, @NonNull Set<String> value,
                                 @NonNull Context context) throws CryptoException {
-        setValue(key + "_cnt", String.valueOf(value.size()), context);
+        setValue(key + KEY_SET_COUNT_POSTFIX, String.valueOf(value.size()), context);
 
         int i = 0;
-        for(String s : value) {
+        for (String s : value) {
             setValue(key + "_" + (i++), s, context);
         }
     }
@@ -105,15 +106,18 @@ public class SecurePreferences {
         return Integer.parseInt(getStringValue(key, context, String.valueOf(defValue)));
     }
 
-    public static Set<String> getStringSetValue(@NonNull String key, @NonNull Context context, Set<String> defValue) {
-        int size = getIntValue(key + "_cnt", context, -1);
+    @NonNull
+    public static Set<String> getStringSetValue(@NonNull String key,
+                                                @NonNull Context context,
+                                                @NonNull Set<String> defValue) {
+        int size = getIntValue(key + KEY_SET_COUNT_POSTFIX, context, -1);
 
-        if(size == -1) {
+        if (size == -1) {
             return defValue;
         }
 
         Set<String> res = new HashSet<>(size);
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             res.add(getStringValue(key + "_" + i, context, ""));
         }
 
