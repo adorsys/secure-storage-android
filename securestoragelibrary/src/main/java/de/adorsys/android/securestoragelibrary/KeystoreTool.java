@@ -83,7 +83,7 @@ class KeystoreTool {
         }
     }
 
-    @Nullable
+    @NonNull
     static String decryptMessage(@NonNull Context context, @NonNull String encryptedMessage) throws CryptoException {
         try {
             Cipher output;
@@ -245,12 +245,16 @@ class KeystoreTool {
 
             // Relict of the JCA API - you have to call load even
             // if you do not have an input stream you want to load or it'll crash
+            if (keyStore == null) {
+                throw new IllegalStateException("the device doesn't seem to be able to handle the keystore");
+            }
             keyStore.load(null);
 
             return keyStore;
         } catch (CertificateException
                 | NoSuchAlgorithmException
                 | KeyStoreException
+                | IllegalStateException
                 | IOException e) {
             throw new CryptoException(e.getMessage(), e);
         }
