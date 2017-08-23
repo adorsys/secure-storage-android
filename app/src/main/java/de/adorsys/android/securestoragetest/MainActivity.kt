@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
-	class EncryptTask(val activity: WeakReference<MainActivity>,
+	class EncryptTask(private val activity: WeakReference<MainActivity>,
 					  private val generateKeyButton: WeakReference<Button>,
 					  private val inputEditText: WeakReference<EditText>,
 					  private val keyInfoTextView: WeakReference<TextView>) : AsyncTask<Void, Boolean, Boolean>() {
@@ -66,9 +66,9 @@ class MainActivity : AppCompatActivity() {
 				}
 				try {
 
-					SecurePreferences.setValue(KEY, inputEditText.text.toString(), activity)
+					SecurePreferences.setValue(activity, KEY, inputEditText.text.toString())
 
-					decryptedMessage = SecurePreferences.getStringValue(KEY, activity, "")
+					decryptedMessage = SecurePreferences.getStringValue(activity, KEY, "")
 					if (BuildConfig.DEBUG) {
 						Log.d(TAG, decryptedMessage!! + " ")
 					}
