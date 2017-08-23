@@ -13,19 +13,12 @@ import android.view.View;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -34,7 +27,6 @@ import java.util.Locale;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.NoSuchPaddingException;
 import javax.security.auth.x500.X500Principal;
 
 import static android.os.Build.VERSION_CODES.M;
@@ -74,11 +66,7 @@ class KeystoreTool {
             byte[] values = outputStream.toByteArray();
             return Base64.encodeToString(values, Base64.DEFAULT);
 
-        } catch (NoSuchAlgorithmException
-                | NoSuchProviderException
-                | NoSuchPaddingException
-                | InvalidKeyException
-                | IOException e) {
+        } catch (Exception e) {
             throw new CryptoException(e.getMessage(), e);
         }
     }
@@ -114,11 +102,7 @@ class KeystoreTool {
 
             return new String(bytes, 0, bytes.length, KEY_CHARSET);
 
-        } catch (NoSuchAlgorithmException
-                | NoSuchProviderException
-                | NoSuchPaddingException
-                | InvalidKeyException
-                | IOException e) {
+        } catch (Exception e) {
             throw new CryptoException(e.getMessage(), e);
         }
     }
@@ -175,9 +159,7 @@ class KeystoreTool {
                 }
                 throw new CryptoException(context.getString(R.string.message_keypair_does_not_exist), null);
             }
-        } catch (NoSuchAlgorithmException
-                | UnrecoverableEntryException
-                | KeyStoreException e) {
+        } catch (Exception e) {
             throw new CryptoException(e.getMessage(), e);
         }
     }
@@ -194,9 +176,7 @@ class KeystoreTool {
                 }
                 throw new CryptoException(context.getString(R.string.message_keypair_does_not_exist), null);
             }
-        } catch (NoSuchAlgorithmException
-                | UnrecoverableEntryException
-                | KeyStoreException e) {
+        } catch (Exception e) {
             throw new CryptoException(e.getMessage(), e);
         }
     }
@@ -230,9 +210,7 @@ class KeystoreTool {
                     = KeyPairGenerator.getInstance(KEY_ENCRYPTION_ALGORITHM, KEY_KEYSTORE_NAME);
             generator.initialize(spec);
             generator.generateKeyPair();
-        } catch (NoSuchAlgorithmException
-                | NoSuchProviderException
-                | InvalidAlgorithmParameterException e) {
+        } catch (Exception e) {
             throw new CryptoException(e.getMessage(), e);
         }
     }
@@ -251,11 +229,7 @@ class KeystoreTool {
             keyStore.load(null);
 
             return keyStore;
-        } catch (CertificateException
-                | NoSuchAlgorithmException
-                | KeyStoreException
-                | IllegalStateException
-                | IOException e) {
+        } catch (Exception e) {
             throw new CryptoException(e.getMessage(), e);
         }
     }
