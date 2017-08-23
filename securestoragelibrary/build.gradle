@@ -9,7 +9,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 3
-        versionName "0.0.3"
+        versionName "$versionName"
 
     }
     buildTypes {
@@ -43,7 +43,7 @@ ext {
     siteUrl = 'https://www.adorsys.de/'
     gitUrl = 'https://github.com/adorsys/secure-storage-android.git'
 
-    libraryVersion = "${versionName}"
+    libraryVersion = "$versionName"
 
     developerId = 'andev'
     developerName = 'Andev Adorsys'
