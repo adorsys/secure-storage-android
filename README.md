@@ -85,6 +85,31 @@ SecurePreferences.clearAllValues(context);
 
 Everything about the cryptographic keys such as generating, maintaining and usage is handled internally by the module, so you do not need to worry about it.
 
+
+### Error handling
+The library throws for everything a SecureStorageException. Within the SecureStorageException you can find a exception type. You can handle the error which occurred with the help of this type as follows:
+
+```kotlin
+try {
+    SecurePreferences.setValue(context, KEY, "Secret")
+    // or
+    val decryptedMessage = SecurePreferences.getStringValue(context, KEY, "")
+} catch (e: SecureStorageException) {
+    handleException(e)
+}
+//
+private fun handleException(e: SecureStorageException) {
+    Log.e(TAG, e.message)
+    when (e.type) {
+        KEYSTORE_NOT_SUPPORTED_EXCEPTION -> Toast.makeText(this, "Oh", Toast.LENGTH_LONG).show()
+        KEYSTORE_EXCEPTION -> Toast.makeText(this, "Fatal - YARK", Toast.LENGTH_LONG).show()
+        CRYPTO_EXCEPTION -> Toast.makeText(this, "2h&$==0j", Toast.LENGTH_LONG).show()
+        INTERNAL_LIBRARY_EXCEPTION -> Toast.makeText(this, "Blame it all on us", Toast.LENGTH_LONG).show()
+        else -> return
+    }
+}
+```
+
 ### Contributors:
 [@drilonreqica](https://github.com/drilonreqica)
 
