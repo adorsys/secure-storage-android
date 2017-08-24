@@ -9,6 +9,8 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import de.adorsys.android.securestoragelibrary.SecurePreferences
+import de.adorsys.android.securestoragelibrary.SecureStorageException
+import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.*
 import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity() {
@@ -49,6 +51,17 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
+	private fun handleException(e: SecureStorageException) {
+		Log.e(TAG, e.message)
+		when (e.type) {
+			KEYSTORE_NOT_SUPPORTED_EXCEPTION -> Toast.makeText(this, R.string.error_not_supported, Toast.LENGTH_LONG).show()
+			KEYSTORE_EXCEPTION -> Toast.makeText(this, R.string.error_fatal, Toast.LENGTH_LONG).show()
+			CRYPTO_EXCEPTION -> Toast.makeText(this, R.string.error_encryption, Toast.LENGTH_LONG).show()
+			INTERNAL_LIBRARY_EXCEPTION -> Toast.makeText(this, R.string.error_library, Toast.LENGTH_LONG).show()
+			else -> return
+		}
+	}
+
 	class EncryptTask(private val activity: WeakReference<MainActivity>,
 					  private val generateKeyButton: WeakReference<Button>,
 					  private val inputEditText: WeakReference<EditText>,
@@ -73,8 +86,10 @@ class MainActivity : AppCompatActivity() {
 						Log.d(TAG, decryptedMessage!! + " ")
 					}
 					return true
-				} catch (e: Exception) {
-					handler.post({Toast.makeText(activity, e.message, Toast.LENGTH_LONG).show()})
+				} catch (e: SecureStorageException) {
+					handler.post({
+						activity.handleException(e)
+					})
 					return false
 				}
 			}
@@ -87,7 +102,6 @@ class MainActivity : AppCompatActivity() {
 			val inputEditText = inputEditText.get() ?: return
 			keyInfoTextView.text = activity.getString(R.string.message_encrypted_decrypted,
 					inputEditText.text.toString(), decryptedMessage)
-
 		}
 	}
 }

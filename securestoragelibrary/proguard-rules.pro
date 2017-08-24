@@ -20,4 +20,4 @@
     static <methods>;
 }
 
--keep class de.adorsys.android.securestoragelibrary.CryptoException
+-keep class de.adorsys.android.securestoragelibrary.SecureStorageException
