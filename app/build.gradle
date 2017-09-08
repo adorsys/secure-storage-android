@@ -9,7 +9,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 25
         versionCode versionCode
-        versionName "$versionName"
+        versionName "${versionName}"
     }
     buildTypes {
         release {
