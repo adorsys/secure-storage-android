@@ -30,60 +30,85 @@ To support more devices we have used the Assymetric key generation, which in the
 Add the module to your apps build.gradle:
 
 ```golang
-compile 'de.adorsys.android:securestoragelibrary:0.0.1'
+compile 'de.adorsys.android:securestoragelibrary:0.0.3'
 ```
 
 To store a string value in our __SecurePreferences__ you have to call:
 ```java
-SecurePreferences.setValue("KEY", "PLAIN_MESSAGE", Context);
+SecurePreferences.setValue(context, "KEY", "PLAIN_MESSAGE");
 ```
 
 This works for every other primitive data type. So for storing a boolean value:
 ```java
-SecurePreferences.setValue("KEY", true/false, Context);
+SecurePreferences.setValue(context, "KEY", true/false);
 ```
 
 for int
 ```java
-SecurePreferences.setValue("KEY", 100, Context);
+SecurePreferences.setValue(context, "KEY", 100);
 ```
 
 for float and long
 ```java
-SecurePreferences.setValue("KEY", 100.12345, Context);
+SecurePreferences.setValue(context, "KEY", 100.12345);
 ```
 
 To retrieve a string value:
 ```java
-SecurePreferences.getStringValue("KEY", Context);
+SecurePreferences.getStringValue(context, "KEY");
 ```
 
 And respectively for the other types
 ```java
-SecurePreferences.getBooleanValue("KEY", Context);
+SecurePreferences.getBooleanValue(context, "KEY");
 ```
 ```java
-SecurePreferences.getIntValue("KEY", Context);
+SecurePreferences.getIntValue(context, "KEY");
 ```
 ```java
-SecurePreferences.getFloatValue("KEY", Context);
+SecurePreferences.getFloatValue(context, "KEY");
 ```
 ```java
-SecurePreferences.getLongValue("KEY", Context);
+SecurePreferences.getLongValue(context, "KEY");
 ```
 
 You can also remove an entry from the SecurePreferences
 ```java
-SecurePreferences.removeValue("KEY", Context);
+SecurePreferences.removeValue(context, "KEY");
 ```
 
 There also is a method for clearing the SecurePreferences and deleting the KeyPair.
 To do that call:
 ```java
-SecurePreferences.clearAllValues(Context);
+SecurePreferences.clearAllValues(context);
 ```
 
 Everything about the cryptographic keys such as generating, maintaining and usage is handled internally by the module, so you do not need to worry about it.
+
+
+### Error handling
+The library throws for everything a SecureStorageException. Within the SecureStorageException you can find a exception type. You can handle the error which occurred with the help of this type as follows:
+
+```kotlin
+try {
+    SecurePreferences.setValue(context, KEY, "Secret")
+    // or
+    val decryptedMessage = SecurePreferences.getStringValue(context, KEY, "")
+} catch (e: SecureStorageException) {
+    handleException(e)
+}
+//
+private fun handleException(e: SecureStorageException) {
+    Log.e(TAG, e.message)
+    when (e.type) {
+        KEYSTORE_NOT_SUPPORTED_EXCEPTION -> Toast.makeText(this, "Oh", Toast.LENGTH_LONG).show()
+        KEYSTORE_EXCEPTION -> Toast.makeText(this, "Fatal - YARK", Toast.LENGTH_LONG).show()
+        CRYPTO_EXCEPTION -> Toast.makeText(this, "2h&$==0j", Toast.LENGTH_LONG).show()
+        INTERNAL_LIBRARY_EXCEPTION -> Toast.makeText(this, "Blame it all on us", Toast.LENGTH_LONG).show()
+        else -> return
+    }
+}
+```
 
 ### Contributors:
 [@drilonreqica](https://github.com/drilonreqica)
