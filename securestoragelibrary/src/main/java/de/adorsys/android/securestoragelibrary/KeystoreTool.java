@@ -45,7 +45,6 @@ class KeystoreTool {
 	private static final String KEY_TRANSFORMATION_ALGORITHM = "RSA/ECB/PKCS1Padding";
 	private static final String KEY_X500PRINCIPAL = "CN=SecureDeviceStorage, O=Adorsys, C=Germany";
 
-	@RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Nullable
 	static String encryptMessage(@NonNull Context context, @NonNull String plainMessage) throws SecureStorageException {
 		try {
@@ -119,7 +118,6 @@ class KeystoreTool {
 		}
 	}
 
-	@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 	static void generateKeyPair(@NonNull Context context) throws SecureStorageException {
 		// Create new key if needed
 		if (!keyPairExists()) {
@@ -183,13 +181,11 @@ class KeystoreTool {
 		}
 	}
 
-	@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 	private static boolean isRTL(@NonNull Context context) {
 		Configuration config = context.getResources().getConfiguration();
 		return config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
 	}
 
-	@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 	private static void generateAsymmetricKeyPair(@NonNull Context context) throws SecureStorageException {
 		try {
 			if (isRTL(context)) {
