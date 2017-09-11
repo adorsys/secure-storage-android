@@ -28,10 +28,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        inputEditText = findViewById(R.id.plain_message_edit_text) as EditText
-        keyInfoTextView = findViewById(R.id.key_info_text_view) as TextView
-        generateKeyButton = findViewById(R.id.generate_key_button) as Button
-        clearPreferencesButton = findViewById(R.id.clear_preferences_button) as Button
+        inputEditText = findViewById(R.id.plain_message_edit_text)
+        keyInfoTextView = findViewById(R.id.key_info_text_view)
+        generateKeyButton = findViewById(R.id.generate_key_button)
+        clearPreferencesButton = findViewById(R.id.clear_preferences_button)
 
         generateKeyButton.setOnClickListener {
             if (!TextUtils.isEmpty(inputEditText.text)) {
