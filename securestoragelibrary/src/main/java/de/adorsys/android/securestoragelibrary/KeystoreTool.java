@@ -97,8 +97,9 @@ final class KeystoreTool {
 					new ByteArrayInputStream(Base64.decode(encryptedMessage, Base64.DEFAULT)), output);
 			List<Byte> values = new ArrayList<>();
 
-			while (cipherInputStream.read() != -1) {
-				values.add((byte) cipherInputStream.read());
+			int nextByte;
+			while ((nextByte = cipherInputStream.read()) != -1) {
+				values.add((byte) nextByte);
 			}
 
 			byte[] bytes = new byte[values.size()];
