@@ -14,9 +14,13 @@ import java.util.Set;
 import static android.content.Context.MODE_PRIVATE;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION;
 
-public class SecurePreferences {
+public final class SecurePreferences {
     private static final String KEY_SHARED_PREFERENCES_NAME = "SecurePreferences";
     private static final String KEY_SET_COUNT_POSTFIX = "_count";
+
+    // hidden constructor to disable initialization
+    private SecurePreferences() {
+    }
 
     public static void setValue(@NonNull Context context,
                                 @NonNull String key,

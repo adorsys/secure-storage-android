@@ -31,7 +31,7 @@ import java.security.Security;
 
 /**
  * Fixes for the output of the default PRNG having low entropy.
- *
+ * <p>
  * The fixes need to be applied via {@link #apply()} before any use of Java
  * Cryptography Architecture primitives. A good place to invoke them is in the
  * application's {@code onCreate}.
@@ -43,8 +43,11 @@ public final class PRNGFixes {
     private static final byte[] BUILD_FINGERPRINT_AND_DEVICE_SERIAL =
             getBuildFingerprintAndDeviceSerial();
 
-    /** Hidden constructor to prevent instantiation. */
-    private PRNGFixes() {}
+    /**
+     * Hidden constructor to prevent instantiation.
+     */
+    private PRNGFixes() {
+    }
 
     /**
      * Applies all fixes.
@@ -63,8 +66,8 @@ public final class PRNGFixes {
      * @throws SecurityException if the fix is needed but could not be applied.
      */
     private static void applyOpenSSLFix() throws SecurityException {
-        if ((Build.VERSION.SDK_INT < VERSION_CODE_JELLY_BEAN)
-                || (Build.VERSION.SDK_INT > VERSION_CODE_JELLY_BEAN_MR2)) {
+        if (Build.VERSION.SDK_INT < VERSION_CODE_JELLY_BEAN
+                || Build.VERSION.SDK_INT > VERSION_CODE_JELLY_BEAN_MR2) {
             // No need to apply the fix
             return;
         }
@@ -108,10 +111,10 @@ public final class PRNGFixes {
         // default, if not yet installed.
         Provider[] secureRandomProviders =
                 Security.getProviders("SecureRandom.SHA1PRNG");
-        if ((secureRandomProviders == null)
-                || (secureRandomProviders.length < 1)
-                || (!LinuxPRNGSecureRandomProvider.class.equals(
-                secureRandomProviders[0].getClass()))) {
+        if (secureRandomProviders == null
+                || secureRandomProviders.length < 1
+                || !LinuxPRNGSecureRandomProvider.class.equals(
+                secureRandomProviders[0].getClass())) {
             Security.insertProviderAt(new LinuxPRNGSecureRandomProvider(), 1);
         }
 
@@ -174,13 +177,13 @@ public final class PRNGFixes {
          * Linux PRNG.
          *
          * Concurrency: Read requests to the underlying Linux PRNG are
-         * serialized (on sLock) to ensure that multiple threads do not get
+         * serialized (on S_LOCK) to ensure that multiple threads do not get
          * duplicated PRNG output.
          */
 
         private static final File URANDOM_FILE = new File("/dev/urandom");
 
-        private static final Object sLock = new Object();
+        private static final Object S_LOCK = new Object();
 
         /**
          * Input stream for reading from Linux PRNG or {@code null} if not yet
@@ -209,7 +212,7 @@ public final class PRNGFixes {
         protected void engineSetSeed(byte[] bytes) {
             try {
                 OutputStream out;
-                synchronized (sLock) {
+                synchronized (S_LOCK) {
                     out = getUrandomOutputStream();
                 }
                 out.write(bytes);
@@ -233,7 +236,7 @@ public final class PRNGFixes {
 
             try {
                 DataInputStream in;
-                synchronized (sLock) {
+                synchronized (S_LOCK) {
                     in = getUrandomInputStream();
                 }
                 synchronized (in) {
@@ -253,7 +256,7 @@ public final class PRNGFixes {
         }
 
         private DataInputStream getUrandomInputStream() {
-            synchronized (sLock) {
+            synchronized (S_LOCK) {
                 if (sUrandomIn == null) {
                     // NOTE: Consider inserting a BufferedInputStream between
                     // DataInputStream and FileInputStream if you need higher
@@ -272,7 +275,7 @@ public final class PRNGFixes {
         }
 
         private OutputStream getUrandomOutputStream() throws IOException {
-            synchronized (sLock) {
+            synchronized (S_LOCK) {
                 if (sUrandomOut == null) {
                     sUrandomOut = new FileOutputStream(URANDOM_FILE);
                 }
@@ -330,7 +333,7 @@ public final class PRNGFixes {
         try {
             return result.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 encoding not supported");
+            throw new RuntimeException("UTF-8 encoding not supported", e);
         }
     }
 }
