@@ -6,7 +6,6 @@ import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -203,6 +202,10 @@ class KeystoreTool {
 					.setStartDate(start.getTime())
 					.setEndDate(end.getTime())
 					.build();
+
+			// Apply this method to fix a JCA random generation bug
+			// https://android-developers.googleblog.com/2013/08/some-securerandom-thoughts.html
+			PRNGFixes.apply();
 
 			KeyPairGenerator generator
 					= KeyPairGenerator.getInstance(KEY_ENCRYPTION_ALGORITHM, KEY_KEYSTORE_NAME);
