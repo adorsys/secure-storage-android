@@ -6,7 +6,6 @@ import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -35,7 +34,7 @@ import static de.adorsys.android.securestoragelibrary.SecureStorageException.Exc
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.KEYSTORE_EXCEPTION;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.KEYSTORE_NOT_SUPPORTED_EXCEPTION;
 
-class KeystoreTool {
+final class KeystoreTool {
 	private static final String KEY_ALIAS = "adorsysKeyPair";
 	private static final String KEY_ENCRYPTION_ALGORITHM = "RSA";
 	private static final String KEY_CHARSET = "UTF-8";
@@ -45,7 +44,10 @@ class KeystoreTool {
 	private static final String KEY_TRANSFORMATION_ALGORITHM = "RSA/ECB/PKCS1Padding";
 	private static final String KEY_X500PRINCIPAL = "CN=SecureDeviceStorage, O=Adorsys, C=Germany";
 
-	@RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+	// hidden constructor to disable initialization
+	private KeystoreTool() {
+	}
+
 	@Nullable
 	static String encryptMessage(@NonNull Context context, @NonNull String plainMessage) throws SecureStorageException {
 		try {
@@ -53,7 +55,7 @@ class KeystoreTool {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2
 					&& Build.VERSION.SDK_INT < M) {
 				input = Cipher.getInstance(KEY_TRANSFORMATION_ALGORITHM, KEY_CIPHER_JELLYBEAN_PROVIDER);
-			} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			} else if (Build.VERSION.SDK_INT >= M) {
 				input = Cipher.getInstance(KEY_TRANSFORMATION_ALGORITHM, KEY_CIPHER_MARSHMALLOW_PROVIDER);
 			} else {
 				Log.e(KeystoreTool.class.getName(), context.getString(R.string.message_supported_api));
@@ -94,9 +96,9 @@ class KeystoreTool {
 			CipherInputStream cipherInputStream = new CipherInputStream(
 					new ByteArrayInputStream(Base64.decode(encryptedMessage, Base64.DEFAULT)), output);
 			List<Byte> values = new ArrayList<>();
-			int nextByte;
-			while ((nextByte = cipherInputStream.read()) != -1) {
-				values.add((byte) nextByte);
+
+			while (cipherInputStream.read() != -1) {
+				values.add((byte) cipherInputStream.read());
 			}
 
 			byte[] bytes = new byte[values.size()];
@@ -119,7 +121,6 @@ class KeystoreTool {
 		}
 	}
 
-	@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 	static void generateKeyPair(@NonNull Context context) throws SecureStorageException {
 		// Create new key if needed
 		if (!keyPairExists()) {
@@ -183,13 +184,11 @@ class KeystoreTool {
 		}
 	}
 
-	@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 	private static boolean isRTL(@NonNull Context context) {
 		Configuration config = context.getResources().getConfiguration();
 		return config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
 	}
 
-	@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 	private static void generateAsymmetricKeyPair(@NonNull Context context) throws SecureStorageException {
 		try {
 			if (isRTL(context)) {

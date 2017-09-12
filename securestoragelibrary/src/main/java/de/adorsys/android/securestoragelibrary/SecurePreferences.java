@@ -4,10 +4,8 @@ package de.adorsys.android.securestoragelibrary;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 
 import java.util.HashSet;
@@ -16,11 +14,14 @@ import java.util.Set;
 import static android.content.Context.MODE_PRIVATE;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION;
 
-public class SecurePreferences {
+public final class SecurePreferences {
     private static final String KEY_SHARED_PREFERENCES_NAME = "SecurePreferences";
     private static final String KEY_SET_COUNT_POSTFIX = "_count";
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    // hidden constructor to disable initialization
+    private SecurePreferences() {
+    }
+
     public static void setValue(@NonNull Context context,
                                 @NonNull String key,
                                 @NonNull String value) throws SecureStorageException {
@@ -36,35 +37,30 @@ public class SecurePreferences {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static void setValue(@NonNull Context context,
                                 @NonNull String key,
                                 boolean value) throws SecureStorageException {
         setValue(context, key, String.valueOf(value));
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static void setValue(@NonNull Context context,
                                 @NonNull String key,
                                 float value) throws SecureStorageException {
         setValue(context, key, String.valueOf(value));
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static void setValue(@NonNull Context context,
                                 @NonNull String key,
                                 long value) throws SecureStorageException {
         setValue(context, key, String.valueOf(value));
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static void setValue(@NonNull Context context,
                                 @NonNull String key,
                                 int value) throws SecureStorageException {
         setValue(context, key, String.valueOf(value));
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static void setValue(@NonNull Context context,
                                 @NonNull String key,
                                 @NonNull Set<String> value) throws SecureStorageException {
