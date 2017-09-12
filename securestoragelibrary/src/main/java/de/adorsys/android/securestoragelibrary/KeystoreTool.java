@@ -207,10 +207,6 @@ final class KeystoreTool {
 					.setEndDate(end.getTime())
 					.build();
 
-			// Apply this method to fix a JCA random generation bug
-			// https://android-developers.googleblog.com/2013/08/some-securerandom-thoughts.html
-			PRNGFixes.apply();
-
 			KeyPairGenerator generator
 					= KeyPairGenerator.getInstance(KEY_ENCRYPTION_ALGORITHM, KEY_KEYSTORE_NAME);
 			generator.initialize(spec);
