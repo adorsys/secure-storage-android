@@ -147,6 +147,12 @@ public class SecurePreferences {
         clearAllSecureValues(context);
     }
 
+    public static boolean contains(@NonNull Context context, @NonNull String key){
+        SharedPreferences preferences = context
+                .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        return preferences.contains(key);
+    }
+
     @SuppressLint("ApplySharedPref")
     private static void setSecureValue(@NonNull Context context,
                                        @NonNull String key,
