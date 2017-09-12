@@ -8,8 +8,8 @@ android:
   components:
   - tools
   - platform-tools
-  - android-25
-  - build-tools-25.0.3
+  - android-26
+  - build-tools-26.0.1
   - extra-android-m2repository
   - extra-google-m2repository
   - extra-android-support
@@ -27,6 +27,8 @@ android:
     - $HOME/.gradle/daemon
     - $HOME/.gradle/native
     - $HOME/.gradle/wrapper
+before_script:
+  - ./code-check.sh
 after_success:
   - ./bintray-upload.sh
 
