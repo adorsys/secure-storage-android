@@ -1,6 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
+// Apply static code analysis configuration
+apply from: './checks.gradle'
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
