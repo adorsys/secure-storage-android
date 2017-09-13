@@ -39,52 +39,56 @@ compile 'de.adorsys.android:securestoragelibrary:0.0.3'
 
 To store a string value in our __SecurePreferences__ you have to call:
 ```java
-SecurePreferences.setValue(context, "KEY", "PLAIN_MESSAGE");
+SecurePreferences.setValue("KEY", "PLAIN_MESSAGE");
 ```
 
 This works for every other primitive data type. So for storing a boolean value:
 ```java
-SecurePreferences.setValue(context, "KEY", true/false);
+SecurePreferences.setValue("KEY", true/false);
 ```
 
 for int
 ```java
-SecurePreferences.setValue(context, "KEY", 100);
+SecurePreferences.setValue("KEY", 100);
 ```
 
 for float and long
 ```java
-SecurePreferences.setValue(context, "KEY", 100.12345);
+SecurePreferences.setValue("KEY", 100.12345);
 ```
 
 To retrieve a string value:
 ```java
-SecurePreferences.getStringValue(context, "KEY");
+SecurePreferences.getStringValue("KEY");
 ```
 
 And respectively for the other types
 ```java
-SecurePreferences.getBooleanValue(context, "KEY");
+SecurePreferences.getBooleanValue("KEY");
 ```
 ```java
-SecurePreferences.getIntValue(context, "KEY");
+SecurePreferences.getIntValue("KEY");
 ```
 ```java
-SecurePreferences.getFloatValue(context, "KEY");
+SecurePreferences.getFloatValue("KEY");
 ```
 ```java
-SecurePreferences.getLongValue(context, "KEY");
-```
-
-You can also remove an entry from the SecurePreferences
-```java
-SecurePreferences.removeValue(context, "KEY");
+SecurePreferences.getLongValue("KEY");
 ```
 
-There also is a method for clearing the SecurePreferences and deleting the KeyPair.
-To do that call:
+See if an entry exists in the SecurePreferences:
 ```java
-SecurePreferences.clearAllValues(context);
+SecurePreferences.contains("KEY");
+```
+
+You can also remove an entry from the SecurePreferences:
+```java
+SecurePreferences.removeValue("KEY");
+```
+
+Clearing the SecurePreferences and deleting the KeyPair:
+```java
+SecurePreferences.clearAllValues();
 ```
 
 Everything about the cryptographic keys such as generating, maintaining and usage is handled internally by the module, so you do not need to worry about it.
