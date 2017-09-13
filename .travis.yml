@@ -31,5 +31,3 @@ before_script:
   - ./code-check.sh
 after_success:
   - ./bintray-upload.sh
-
-
