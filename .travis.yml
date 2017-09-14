@@ -6,8 +6,6 @@ branches:
   - develop
 android:
   components:
-  - tools
-  - platform-tools
   - build-tools-$ANDROID_BUILD_TOOLS_VERSION
   - android-$ANDROID_API_LEVEL
   - android-$EMULATOR_API_LEVEL
@@ -32,9 +30,9 @@ android:
     - $HOME/.gradle/wrapper
 env:
   global:
-    - ANDROID_API_LEVEL=23
+    - ANDROID_API_LEVEL=21
     - EMULATOR_API_LEVEL=21
-    - ANDROID_BUILD_TOOLS_VERSION=23.0.2
+    - ANDROID_BUILD_TOOLS_VERSION=21.0.2
     - ANDROID_ABI=armeabi-v7a
     - ANDROID_TAG=google_apis
     - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
