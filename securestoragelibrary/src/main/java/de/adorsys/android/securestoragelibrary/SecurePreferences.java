@@ -1,89 +1,93 @@
+/*
+ * Copyright (C) 2017 adorsys GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.android.securestoragelibrary;
 
-
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
+import static de.adorsys.android.securestoragelibrary.SecureStorageProvider.context;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION;
 
-public class SecurePreferences {
+public final class SecurePreferences {
     private static final String KEY_SHARED_PREFERENCES_NAME = "SecurePreferences";
     private static final String KEY_SET_COUNT_POSTFIX = "_count";
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public static void setValue(@NonNull Context context,
-                                @NonNull String key,
+    // hidden constructor to disable initialization
+    private SecurePreferences() {
+    }
+
+    public static void setValue(@NonNull String key,
                                 @NonNull String value) throws SecureStorageException {
         if (!KeystoreTool.keyPairExists()) {
-            KeystoreTool.generateKeyPair(context);
+            KeystoreTool.generateKeyPair();
         }
 
-        String transformedValue = KeystoreTool.encryptMessage(context, value);
+        String transformedValue = KeystoreTool.encryptMessage(value);
         if (TextUtils.isEmpty(transformedValue)) {
-            throw new SecureStorageException(context.getString(R.string.message_problem_encryption), null, CRYPTO_EXCEPTION);
+            throw new SecureStorageException(context.get().getString(R.string.message_problem_encryption), null, CRYPTO_EXCEPTION);
         } else {
-            setSecureValue(context, key, transformedValue);
+            setSecureValue(key, transformedValue);
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public static void setValue(@NonNull Context context,
-                                @NonNull String key,
+    public static void setValue(@NonNull String key,
                                 boolean value) throws SecureStorageException {
-        setValue(context, key, String.valueOf(value));
+        setValue(key, String.valueOf(value));
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public static void setValue(@NonNull Context context,
-                                @NonNull String key,
+    public static void setValue(@NonNull String key,
                                 float value) throws SecureStorageException {
-        setValue(context, key, String.valueOf(value));
+        setValue(key, String.valueOf(value));
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public static void setValue(@NonNull Context context,
-                                @NonNull String key,
+    public static void setValue(@NonNull String key,
                                 long value) throws SecureStorageException {
-        setValue(context, key, String.valueOf(value));
+        setValue(key, String.valueOf(value));
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public static void setValue(@NonNull Context context,
-                                @NonNull String key,
+    public static void setValue(@NonNull String key,
                                 int value) throws SecureStorageException {
-        setValue(context, key, String.valueOf(value));
+        setValue(key, String.valueOf(value));
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public static void setValue(@NonNull Context context,
-                                @NonNull String key,
+    public static void setValue(@NonNull String key,
                                 @NonNull Set<String> value) throws SecureStorageException {
-        setValue(context, key + KEY_SET_COUNT_POSTFIX, String.valueOf(value.size()));
+        setValue(key + KEY_SET_COUNT_POSTFIX, String.valueOf(value.size()));
 
         int i = 0;
         for (String s : value) {
-            setValue(context, key + "_" + (i++), s);
+            setValue(key + "_" + (i++), s);
         }
     }
 
     @Nullable
-    public static String getStringValue(@NonNull Context context,
-                                        @NonNull String key,
+    public static String getStringValue(@NonNull String key,
                                         @Nullable String defValue) {
-        String result = getSecureValue(context, key);
+        String result = getSecureValue(key);
         try {
             if (!TextUtils.isEmpty(result)) {
-                return KeystoreTool.decryptMessage(context, result);
+                return KeystoreTool.decryptMessage(result);
             } else {
                 return defValue;
             }
@@ -92,35 +96,30 @@ public class SecurePreferences {
         }
     }
 
-    public static boolean getBooleanValue(@NonNull Context context,
-                                          @NonNull String key,
+    public static boolean getBooleanValue(@NonNull String key,
                                           boolean defValue) {
-        return Boolean.parseBoolean(getStringValue(context, key, String.valueOf(defValue)));
+        return Boolean.parseBoolean(getStringValue(key, String.valueOf(defValue)));
     }
 
-    public static float getFloatValue(@NonNull Context context,
-                                      @NonNull String key,
+    public static float getFloatValue(@NonNull String key,
                                       float defValue) {
-        return Float.parseFloat(getStringValue(context, key, String.valueOf(defValue)));
+        return Float.parseFloat(getStringValue(key, String.valueOf(defValue)));
     }
 
-    public static long getLongValue(@NonNull Context context,
-                                    @NonNull String key,
+    public static long getLongValue(@NonNull String key,
                                     long defValue) {
-        return Long.parseLong(getStringValue(context, key, String.valueOf(defValue)));
+        return Long.parseLong(getStringValue(key, String.valueOf(defValue)));
     }
 
-    public static int getIntValue(@NonNull Context context,
-                                  @NonNull String key,
+    public static int getIntValue(@NonNull String key,
                                   int defValue) {
-        return Integer.parseInt(getStringValue(context, key, String.valueOf(defValue)));
+        return Integer.parseInt(getStringValue(key, String.valueOf(defValue)));
     }
 
     @NonNull
     public static Set<String> getStringSetValue(@NonNull String key,
-                                                @NonNull Context context,
                                                 @NonNull Set<String> defValue) {
-        int size = getIntValue(context, key + KEY_SET_COUNT_POSTFIX, -1);
+        int size = getIntValue(key + KEY_SET_COUNT_POSTFIX, -1);
 
         if (size == -1) {
             return defValue;
@@ -128,53 +127,55 @@ public class SecurePreferences {
 
         Set<String> res = new HashSet<>(size);
         for (int i = 0; i < size; i++) {
-            res.add(getStringValue(context,key + "_" + i, ""));
+            res.add(getStringValue(key + "_" + i, ""));
         }
 
         return res;
     }
 
-    public static void removeValue(@NonNull Context context,
-                                   @NonNull String key) {
-        removeSecureValue(context, key);
+    public static void removeValue(@NonNull String key) {
+        removeSecureValue(key);
     }
 
 
-    public static void clearAllValues(@NonNull Context context) throws SecureStorageException {
+    public static void clearAllValues() throws SecureStorageException {
         if (KeystoreTool.keyPairExists()) {
-            KeystoreTool.deleteKeyPair(context);
+            KeystoreTool.deleteKeyPair();
         }
-        clearAllSecureValues(context);
+        clearAllSecureValues();
+    }
+
+    public static boolean contains(@NonNull String key) {
+        SharedPreferences preferences = context.get()
+                .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        return preferences.contains(key);
     }
 
     @SuppressLint("ApplySharedPref")
-    private static void setSecureValue(@NonNull Context context,
-                                       @NonNull String key,
+    private static void setSecureValue(@NonNull String key,
                                        @NonNull String value) {
-        SharedPreferences preferences = context
+        SharedPreferences preferences = context.get()
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         preferences.edit().putString(key, value).commit();
     }
 
     @Nullable
-    private static String getSecureValue(@NonNull Context context,
-                                         @NonNull String key) {
-        SharedPreferences preferences = context
+    private static String getSecureValue(@NonNull String key) {
+        SharedPreferences preferences = context.get()
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         return preferences.getString(key, null);
     }
 
     @SuppressLint("ApplySharedPref")
-    private static void removeSecureValue(@NonNull Context context,
-                                          @NonNull String key) {
-        SharedPreferences preferences = context
+    private static void removeSecureValue(@NonNull String key) {
+        SharedPreferences preferences = context.get()
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         preferences.edit().remove(key).commit();
     }
 
     @SuppressLint("ApplySharedPref")
-    private static void clearAllSecureValues(@NonNull Context context) {
-        SharedPreferences preferences = context
+    private static void clearAllSecureValues() {
+        SharedPreferences preferences = context.get()
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         preferences.edit().clear().commit();
     }
