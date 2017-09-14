@@ -6,16 +6,14 @@ branches:
   - develop
 env:
   global:
-    - ANDROID_API_LEVEL=21
+    - ANDROID_API_LEVEL=26
     - EMULATOR_API_LEVEL=21
-    - ANDROID_BUILD_TOOLS_VERSION=21.0.2
+    - ANDROID_BUILD_TOOLS_VERSION=26.0.1
     - ANDROID_ABI=armeabi-v7a
     - ANDROID_TAG=google_apis
-    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
+#    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
 android:
   components:
-  - android-26
-  - build-tools-26.0.1
   - build-tools-$ANDROID_BUILD_TOOLS_VERSION
   - android-$ANDROID_API_LEVEL
   - android-$EMULATOR_API_LEVEL
@@ -41,8 +39,8 @@ android:
 before_script:
   - ./code-check.sh
   - echo no | android create avd --force -n test -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - ./android-wait-for-emulator.sh
+  - emulator -avd test -no-skin -no-window &
+  - travis_wait 20 android-wait-for-emulator
   - adb shell input keyevent 82 &
 script:
   - travis_wait 20 ./gradlew connectedAndroidTest
