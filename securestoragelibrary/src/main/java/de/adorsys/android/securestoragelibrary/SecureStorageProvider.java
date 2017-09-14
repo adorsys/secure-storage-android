@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package de.adorsys.android.securestoragelibrary;
 
 import android.content.ContentProvider;
@@ -38,7 +39,7 @@ public final class SecureStorageProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, //NOPMD
                         @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         return null;
     }

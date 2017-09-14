@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package de.adorsys.android.securestoragelibrary;
 
 import android.annotation.SuppressLint;
@@ -144,7 +145,7 @@ public final class SecurePreferences {
         clearAllSecureValues();
     }
 
-    public static boolean contains(@NonNull String key){
+    public static boolean contains(@NonNull String key) {
         SharedPreferences preferences = context.get()
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         return preferences.contains(key);
