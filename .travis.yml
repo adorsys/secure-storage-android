@@ -45,6 +45,6 @@ before_script:
   - ./android-wait-for-emulator.sh
   - adb shell input keyevent 82 &
 script:
-  - ./gradlew connectedAndroidTest
+  - travis_wait 20 ./gradlew connectedAndroidTest
 after_success:
   - ./bintray-upload.sh
