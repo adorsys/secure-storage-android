@@ -4,6 +4,10 @@ branches:
   only:
   - master
   - develop
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/gradle/caches/
+    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
 env:
   global:
     - ANDROID_API_LEVEL=26
@@ -11,7 +15,6 @@ env:
     - ANDROID_BUILD_TOOLS_VERSION=26.0.1
     - ANDROID_ABI=armeabi-v7a
     - ANDROID_TAG=google_apis
-#    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
 android:
   components:
   - build-tools-$ANDROID_BUILD_TOOLS_VERSION
@@ -43,6 +46,6 @@ before_script:
   - travis_wait 20 android-wait-for-emulator
   - adb shell input keyevent 82 &
 script:
-  - travis_wait 20 ./gradlew connectedAndroidTest
+  - ./gradlew connectedAndroidTest
 after_success:
   - ./bintray-upload.sh
