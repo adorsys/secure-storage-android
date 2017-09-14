@@ -4,8 +4,18 @@ branches:
   only:
   - master
   - develop
+env:
+  global:
+    - ANDROID_API_LEVEL=21
+    - EMULATOR_API_LEVEL=21
+    - ANDROID_BUILD_TOOLS_VERSION=21.0.2
+    - ANDROID_ABI=armeabi-v7a
+    - ANDROID_TAG=google_apis
+    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
 android:
   components:
+  - android-26
+  - build-tools-26.0.1
   - build-tools-$ANDROID_BUILD_TOOLS_VERSION
   - android-$ANDROID_API_LEVEL
   - android-$EMULATOR_API_LEVEL
@@ -28,20 +38,11 @@ android:
     - $HOME/.gradle/daemon
     - $HOME/.gradle/native
     - $HOME/.gradle/wrapper
-env:
-  global:
-    - ANDROID_API_LEVEL=21
-    - EMULATOR_API_LEVEL=21
-    - ANDROID_BUILD_TOOLS_VERSION=21.0.2
-    - ANDROID_ABI=armeabi-v7a
-    - ANDROID_TAG=google_apis
-    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
 before_script:
-#- ./code-check.sh
-- echo no | android create avd --force -n test -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
-- emulator -avd test -no-skin -no-audio -no-window &
+  - ./code-check.sh
+  - echo no | android create avd --force -n test -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
+  - emulator -avd test -no-skin -no-audio -no-window &
 script:
-- android list target
-- ./gradlew connectedAndroidTest
+  - ./gradlew connectedAndroidTest
 after_success:
   - ./bintray-upload.sh
