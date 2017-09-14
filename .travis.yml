@@ -42,8 +42,8 @@ before_script:
   - ./code-check.sh
   - echo no | android create avd --force -n test -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
   - emulator -avd test -no-skin -no-audio -no-window &
-script:
   - ./android-wait-for-emulator.sh
+script:
   - ./gradlew connectedAndroidTest
 after_success:
   - ./bintray-upload.sh
