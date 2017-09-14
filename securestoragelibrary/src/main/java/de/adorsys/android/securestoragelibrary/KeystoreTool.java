@@ -1,6 +1,20 @@
+/*
+ * Copyright (C) 2017 adorsys GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.adorsys.android.securestoragelibrary;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
@@ -29,6 +43,7 @@ import javax.crypto.CipherOutputStream;
 import javax.security.auth.x500.X500Principal;
 
 import static android.os.Build.VERSION_CODES.M;
+import static de.adorsys.android.securestoragelibrary.SecureStorageProvider.context;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.INTERNAL_LIBRARY_EXCEPTION;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.KEYSTORE_EXCEPTION;
@@ -49,7 +64,7 @@ final class KeystoreTool {
 	}
 
 	@Nullable
-	static String encryptMessage(@NonNull Context context, @NonNull String plainMessage) throws SecureStorageException {
+	static String encryptMessage(@NonNull String plainMessage) throws SecureStorageException {
 		try {
 			Cipher input;
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2
@@ -58,10 +73,10 @@ final class KeystoreTool {
 			} else if (Build.VERSION.SDK_INT >= M) {
 				input = Cipher.getInstance(KEY_TRANSFORMATION_ALGORITHM, KEY_CIPHER_MARSHMALLOW_PROVIDER);
 			} else {
-				Log.e(KeystoreTool.class.getName(), context.getString(R.string.message_supported_api));
-				throw new SecureStorageException(context.getString(R.string.message_supported_api), null, KEYSTORE_NOT_SUPPORTED_EXCEPTION);
+				Log.e(KeystoreTool.class.getName(), context.get().getString(R.string.message_supported_api));
+				throw new SecureStorageException(context.get().getString(R.string.message_supported_api), null, KEYSTORE_NOT_SUPPORTED_EXCEPTION);
 			}
-			input.init(Cipher.ENCRYPT_MODE, getPublicKey(context));
+			input.init(Cipher.ENCRYPT_MODE, getPublicKey());
 
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			CipherOutputStream cipherOutputStream = new CipherOutputStream(
@@ -78,7 +93,7 @@ final class KeystoreTool {
 	}
 
 	@NonNull
-	static String decryptMessage(@NonNull Context context, @NonNull String encryptedMessage) throws SecureStorageException {
+	static String decryptMessage(@NonNull String encryptedMessage) throws SecureStorageException {
 		try {
 			Cipher output;
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2
@@ -87,11 +102,11 @@ final class KeystoreTool {
 			} else if (Build.VERSION.SDK_INT >= M) {
 				output = Cipher.getInstance(KEY_TRANSFORMATION_ALGORITHM, KEY_CIPHER_MARSHMALLOW_PROVIDER);
 			} else {
-				Log.e(KeystoreTool.class.getName(), context.getString(R.string.message_supported_api));
-				throw new SecureStorageException(context.getString(R.string.message_supported_api), null, KEYSTORE_NOT_SUPPORTED_EXCEPTION);
+				Log.e(KeystoreTool.class.getName(), context.get().getString(R.string.message_supported_api));
+				throw new SecureStorageException(context.get().getString(R.string.message_supported_api), null, KEYSTORE_NOT_SUPPORTED_EXCEPTION);
 			}
 
-			output.init(Cipher.DECRYPT_MODE, getPrivateKey(context));
+			output.init(Cipher.DECRYPT_MODE, getPrivateKey());
 
 			CipherInputStream cipherInputStream = new CipherInputStream(
 					new ByteArrayInputStream(Base64.decode(encryptedMessage, Base64.DEFAULT)), output);
@@ -122,22 +137,22 @@ final class KeystoreTool {
 		}
 	}
 
-	static void generateKeyPair(@NonNull Context context) throws SecureStorageException {
+	static void generateKeyPair() throws SecureStorageException {
 		// Create new key if needed
 		if (!keyPairExists()) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-				generateAsymmetricKeyPair(context);
+				generateAsymmetricKeyPair();
 			} else {
-				Log.e(KeystoreTool.class.getName(), context.getString(R.string.message_supported_api));
-				throw new SecureStorageException(context.getString(R.string.message_supported_api), null, KEYSTORE_NOT_SUPPORTED_EXCEPTION);
+				Log.e(KeystoreTool.class.getName(), context.get().getString(R.string.message_supported_api));
+				throw new SecureStorageException(context.get().getString(R.string.message_supported_api), null, KEYSTORE_NOT_SUPPORTED_EXCEPTION);
 			}
 		} else if (BuildConfig.DEBUG) {
 			Log.e(KeystoreTool.class.getName(),
-					context.getString(R.string.message_keypair_already_exists));
+					context.get().getString(R.string.message_keypair_already_exists));
 		}
 	}
 
-	static void deleteKeyPair(@NonNull Context context) throws SecureStorageException {
+	static void deleteKeyPair() throws SecureStorageException {
 		// Delete Key from Keystore
 		if (keyPairExists()) {
 			try {
@@ -147,21 +162,21 @@ final class KeystoreTool {
 			}
 		} else if (BuildConfig.DEBUG) {
 			Log.e(KeystoreTool.class.getName(),
-					context.getString(R.string.message_keypair_does_not_exist));
+					context.get().getString(R.string.message_keypair_does_not_exist));
 		}
 	}
 
 	@Nullable
-	private static PublicKey getPublicKey(@NonNull Context context) throws SecureStorageException {
+	private static PublicKey getPublicKey() throws SecureStorageException {
 		try {
 			if (keyPairExists()) {
 				KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) getKeyStoreInstance().getEntry(KEY_ALIAS, null);
 				return privateKeyEntry.getCertificate().getPublicKey();
 			} else {
 				if (BuildConfig.DEBUG) {
-					Log.e(KeystoreTool.class.getName(), context.getString(R.string.message_keypair_does_not_exist));
+					Log.e(KeystoreTool.class.getName(), context.get().getString(R.string.message_keypair_does_not_exist));
 				}
-				throw new SecureStorageException(context.getString(R.string.message_keypair_does_not_exist), null, INTERNAL_LIBRARY_EXCEPTION);
+				throw new SecureStorageException(context.get().getString(R.string.message_keypair_does_not_exist), null, INTERNAL_LIBRARY_EXCEPTION);
 			}
 		} catch (Exception e) {
 			throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
@@ -169,30 +184,30 @@ final class KeystoreTool {
 	}
 
 	@Nullable
-	private static PrivateKey getPrivateKey(@NonNull Context context) throws SecureStorageException {
+	private static PrivateKey getPrivateKey() throws SecureStorageException {
 		try {
 			if (keyPairExists()) {
 				KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) getKeyStoreInstance().getEntry(KEY_ALIAS, null);
 				return privateKeyEntry.getPrivateKey();
 			} else {
 				if (BuildConfig.DEBUG) {
-					Log.e(KeystoreTool.class.getName(), context.getString(R.string.message_keypair_does_not_exist));
+					Log.e(KeystoreTool.class.getName(), context.get().getString(R.string.message_keypair_does_not_exist));
 				}
-				throw new SecureStorageException(context.getString(R.string.message_keypair_does_not_exist), null, INTERNAL_LIBRARY_EXCEPTION);
+				throw new SecureStorageException(context.get().getString(R.string.message_keypair_does_not_exist), null, INTERNAL_LIBRARY_EXCEPTION);
 			}
 		} catch (Exception e) {
 			throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
 		}
 	}
 
-	private static boolean isRTL(@NonNull Context context) {
-		Configuration config = context.getResources().getConfiguration();
+	private static boolean isRTL() {
+		Configuration config = context.get().getResources().getConfiguration();
 		return config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
 	}
 
-	private static void generateAsymmetricKeyPair(@NonNull Context context) throws SecureStorageException {
+	private static void generateAsymmetricKeyPair() throws SecureStorageException {
 		try {
-			if (isRTL(context)) {
+			if (isRTL()) {
 				Locale.setDefault(Locale.US);
 			}
 
@@ -200,7 +215,7 @@ final class KeystoreTool {
 			Calendar end = Calendar.getInstance();
 			end.add(Calendar.YEAR, 99);
 
-			KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
+			KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context.get())
 					.setAlias(KEY_ALIAS)
 					.setSubject(new X500Principal(KEY_X500PRINCIPAL))
 					.setSerialNumber(BigInteger.TEN)

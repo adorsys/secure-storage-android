@@ -5,7 +5,11 @@
         android:allowBackup="false"
         android:label="@string/app_name"
         android:supportsRtl="true">
-
+            <provider
+                android:authorities="${applicationId}.de.adorsys.android.securestoragelibrary"
+                android:exported="false"
+                android:enabled="true"
+                android:name=".SecureStorageProvider" />
     </application>
 
 </manifest>
