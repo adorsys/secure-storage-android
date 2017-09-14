@@ -34,7 +34,7 @@ To support more devices we have used the Assymetric key generation, which in the
 Add the module to your apps build.gradle:
 
 ```golang
-compile 'de.adorsys.android:securestoragelibrary:0.0.3'
+compile 'de.adorsys.android:securestoragelibrary:1.0.0'
 ```
 
 To store a string value in our __SecurePreferences__ you have to call:
@@ -99,9 +99,9 @@ The library throws for everything a SecureStorageException. Within the SecureSto
 
 ```kotlin
 try {
-    SecurePreferences.setValue(context, KEY, "Secret")
+    SecurePreferences.setValue(KEY, "Secret")
     // or
-    val decryptedMessage = SecurePreferences.getStringValue(context, KEY, "")
+    val decryptedMessage = SecurePreferences.getStringValue(KEY, "")
 } catch (e: SecureStorageException) {
     handleException(e)
 }
