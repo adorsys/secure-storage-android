@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -11,28 +12,46 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="de.adorsys.android.securestoragetest.MainActivity">
 
+    <ImageView
+        android:id="@+id/shield_image"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/shield_unlocked" />
+
     <EditText
         android:id="@+id/plain_message_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/text_to_encrypt" />
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:hint="@string/text_to_encrypt"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white" />
 
     <Button
         android:id="@+id/generate_key_button"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_encrypt" />
+        android:text="@string/button_encrypt"
+        android:textColor="@color/colorPrimaryDark" />
 
     <TextView
         android:id="@+id/key_info_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin" />
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textColor="@android:color/white" />
 
     <Button
-        android:id="@+id/clear_preferences_button"
+        android:id="@+id/clear_field_button"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/button_clear_preferences" />
+        android:enabled="false"
+        android:text="@string/button_clear_field"
+        android:textColor="@color/colorWarning" />
 </LinearLayout>

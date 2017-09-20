@@ -15,18 +15,25 @@
  */
 package de.adorsys.android.securestoragetest
 
+import android.content.Intent
+import android.net.Uri
 import android.os.*
 import android.support.v7.app.AppCompatActivity
+import android.text.Html
+import android.text.Spanned
 import android.text.TextUtils
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.view.Menu
+import android.view.MenuItem
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.Animation.AnimationListener
+import android.widget.*
 import de.adorsys.android.securestoragelibrary.SecurePreferences
 import de.adorsys.android.securestoragelibrary.SecureStorageException
 import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.*
 import java.lang.ref.WeakReference
+
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -37,7 +44,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var inputEditText: EditText
     private lateinit var keyInfoTextView: TextView
     private lateinit var generateKeyButton: Button
-    private lateinit var clearPreferencesButton: Button
+    private lateinit var clearFieldButton: Button
+    private lateinit var shieldImageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +54,8 @@ class MainActivity : AppCompatActivity() {
         inputEditText = findViewById(R.id.plain_message_edit_text)
         keyInfoTextView = findViewById(R.id.key_info_text_view)
         generateKeyButton = findViewById(R.id.generate_key_button)
-        clearPreferencesButton = findViewById(R.id.clear_preferences_button)
+        clearFieldButton = findViewById(R.id.clear_field_button)
+        shieldImageView = findViewById(R.id.shield_image)
 
         generateKeyButton.setOnClickListener {
             if (!TextUtils.isEmpty(inputEditText.text)) {
@@ -56,14 +65,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        clearPreferencesButton.setOnClickListener {
-            try {
-                SecurePreferences.clearAllValues()
-                Toast.makeText(this@MainActivity, "SecurePreferences cleared and KeyPair deleted", Toast.LENGTH_SHORT).show()
-                keyInfoTextView.text = ""
-            } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_LONG).show()
-            }
+        clearFieldButton.setOnClickListener {
+            SecurePreferences.removeValue(KEY)
+            inputEditText.setText("")
+            keyInfoTextView.text = ""
+            clearFieldButton.isEnabled = false
+            shieldImageView.setImageResource(R.drawable.shield_unlocked)
         }
     }
 
@@ -75,6 +82,36 @@ class MainActivity : AppCompatActivity() {
             CRYPTO_EXCEPTION -> Toast.makeText(this, R.string.error_encryption, Toast.LENGTH_LONG).show()
             INTERNAL_LIBRARY_EXCEPTION -> Toast.makeText(this, R.string.error_library, Toast.LENGTH_LONG).show()
             else -> return
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            R.id.action_clear_all -> {
+                try {
+                    SecurePreferences.clearAllValues()
+                    Toast.makeText(this@MainActivity, "SecurePreferences cleared and KeyPair deleted", Toast.LENGTH_SHORT).show()
+                    inputEditText.setText("")
+                    keyInfoTextView.text = ""
+                    clearFieldButton.isEnabled = false
+                    shieldImageView.setImageResource(R.drawable.shield_unlocked)
+                } catch (e: Exception) {
+                    Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_LONG).show()
+                }
+                return true
+            }
+            R.id.action_info -> {
+                startActivity(Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/adorsys/secure-storage-android/blob/master/README.md")))
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
     }
 
@@ -109,10 +146,40 @@ class MainActivity : AppCompatActivity() {
 
         override fun onPostExecute(result: Boolean?) {
             val activity = activity.get() ?: return
-            val keyInfoTextView = activity.keyInfoTextView
-            val inputEditText = activity.inputEditText
-            keyInfoTextView.text = activity.getString(R.string.message_encrypted_decrypted,
-                    inputEditText.text.toString(), decryptedMessage)
+            val fadeIn = AlphaAnimation(0f, 1f)
+            fadeIn.duration = 500
+            val fadeOut = AlphaAnimation(1f, 0f)
+            fadeOut.duration = 500
+
+            fadeOut.setAnimationListener(object : AnimationListener {
+
+                override fun onAnimationStart(animation: Animation) {}
+
+                override fun onAnimationRepeat(animation: Animation) {}
+
+                override fun onAnimationEnd(animation: Animation) {
+                    activity.shieldImageView.setImageResource(R.drawable.shield_locked)
+
+                    activity.shieldImageView.startAnimation(fadeIn)
+
+                    val keyInfoTextView = activity.keyInfoTextView
+                    val inputEditText = activity.inputEditText
+                    activity.clearFieldButton.isEnabled = true
+
+                    val finalMessage = String.format(activity.getString(R.string.message_encrypted_decrypted,
+                            inputEditText.text.toString(), decryptedMessage))
+                    keyInfoTextView.text = getSpannedText(finalMessage)
+                }
+            })
+            activity.shieldImageView.startAnimation(fadeOut)
+        }
+
+        private fun getSpannedText(text: String): Spanned {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                return Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT);
+            } else {
+                return Html.fromHtml(text);
+            }
         }
     }
 }

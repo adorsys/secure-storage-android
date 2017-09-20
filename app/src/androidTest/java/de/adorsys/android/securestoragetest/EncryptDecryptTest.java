@@ -21,7 +21,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @RunWith(AndroidJUnit4.class)
 public class EncryptDecryptTest {
     @Rule
-    public ActivityTestRule mActivityRule = new ActivityTestRule<>(
+    public ActivityTestRule activityRule = new ActivityTestRule<>(
             MainActivity.class);
 
     @Before
@@ -38,7 +38,7 @@ public class EncryptDecryptTest {
         onView(withId(R.id.plain_message_edit_text)).perform(typeText(testString));
         onView(withId(R.id.generate_key_button)).perform(click());
 
-        Assert.assertNotNull(SecurePreferences.getStringValue(KEY, ""));
+        Assert.assertNotNull(SecurePreferences.getStringValue(KEY, null));
         Assert.assertEquals(testString, SecurePreferences.getStringValue(KEY, ""));
     }
 }
