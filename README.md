@@ -137,5 +137,10 @@ This link covers security aspect of the android storage:
 https://developer.android.com/guide/topics/data/data-storage.html  
 http://stackoverflow.com/a/26077852/3392276  
 
+### Screenshots:
+
+Default Layout             |  After Encryption         |  Extra Options
+:-------------------------:|:-------------------------:|:-------------------------:
+![](https://github.com/adorsys/secure-storage-android/blob/master/screenshots/screenshot-1.png)  |  ![](https://github.com/adorsys/secure-storage-android/blob/master/screenshots/screenshot-2.png) |  ![](https://github.com/adorsys/secure-storage-android/blob/master/screenshots/screenshot-3.png)
 
 
