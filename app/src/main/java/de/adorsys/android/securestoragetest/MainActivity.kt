@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package de.adorsys.android.securestoragetest
 
 import android.content.Intent
@@ -33,7 +34,6 @@ import de.adorsys.android.securestoragelibrary.SecurePreferences
 import de.adorsys.android.securestoragelibrary.SecureStorageException
 import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.*
 import java.lang.ref.WeakReference
-
 
 class MainActivity : AppCompatActivity() {
     companion object {
