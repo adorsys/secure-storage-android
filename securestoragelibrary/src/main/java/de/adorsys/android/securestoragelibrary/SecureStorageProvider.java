@@ -34,6 +34,8 @@ public final class SecureStorageProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         context = new WeakReference<>(getContext());
+        // Fixes for the output of the default PRNG having low entropy on API 18
+        PRNGFixes.apply();
         return true;
     }
 

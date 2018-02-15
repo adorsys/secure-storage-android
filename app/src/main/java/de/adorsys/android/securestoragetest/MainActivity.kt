@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package de.adorsys.android.securestoragetest
 
 import android.content.Intent
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Html
 import android.text.Spanned
@@ -27,13 +29,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
-import android.view.animation.Animation.AnimationListener
-import android.widget.*
+import android.widget.Toast
 import de.adorsys.android.securestoragelibrary.SecurePreferences
 import de.adorsys.android.securestoragelibrary.SecureStorageException
 import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.*
-import java.lang.ref.WeakReference
-
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -41,48 +41,12 @@ class MainActivity : AppCompatActivity() {
         private val TAG = "LOGTAG"
     }
 
-    private lateinit var inputEditText: EditText
-    private lateinit var keyInfoTextView: TextView
-    private lateinit var generateKeyButton: Button
-    private lateinit var clearFieldButton: Button
-    private lateinit var shieldImageView: ImageView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        inputEditText = findViewById(R.id.plain_message_edit_text)
-        keyInfoTextView = findViewById(R.id.key_info_text_view)
-        generateKeyButton = findViewById(R.id.generate_key_button)
-        clearFieldButton = findViewById(R.id.clear_field_button)
-        shieldImageView = findViewById(R.id.shield_image)
-
-        generateKeyButton.setOnClickListener {
-            if (!TextUtils.isEmpty(inputEditText.text)) {
-                EncryptAsyncTask(WeakReference(this)).execute()
-            } else {
-                Toast.makeText(this@MainActivity, "Field cannot be empty", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        clearFieldButton.setOnClickListener {
-            SecurePreferences.removeValue(KEY)
-            inputEditText.setText("")
-            keyInfoTextView.text = ""
-            clearFieldButton.isEnabled = false
-            shieldImageView.setImageResource(R.drawable.shield_unlocked)
-        }
-    }
-
-    private fun handleException(e: SecureStorageException) {
-        Log.e(TAG, e.message)
-        when (e.type) {
-            KEYSTORE_NOT_SUPPORTED_EXCEPTION -> Toast.makeText(this, R.string.error_not_supported, Toast.LENGTH_LONG).show()
-            KEYSTORE_EXCEPTION -> Toast.makeText(this, R.string.error_fatal, Toast.LENGTH_LONG).show()
-            CRYPTO_EXCEPTION -> Toast.makeText(this, R.string.error_encryption, Toast.LENGTH_LONG).show()
-            INTERNAL_LIBRARY_EXCEPTION -> Toast.makeText(this, R.string.error_library, Toast.LENGTH_LONG).show()
-            else -> return
-        }
+        generate_key_button.setOnClickListener { handleOnGenerateKeyButtonClick() }
+        clear_field_button.setOnClickListener { handleOnClearFieldButtonClick() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -92,15 +56,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             R.id.action_clear_all -> {
                 try {
                     SecurePreferences.clearAllValues()
                     Toast.makeText(this@MainActivity, "SecurePreferences cleared and KeyPair deleted", Toast.LENGTH_SHORT).show()
-                    inputEditText.setText("")
-                    keyInfoTextView.text = ""
-                    clearFieldButton.isEnabled = false
-                    shieldImageView.setImageResource(R.drawable.shield_unlocked)
+                    plain_message_edit_text.setText("")
+                    key_info_text_view.text = ""
+                    clear_field_button.isEnabled = false
+                    shield_image.setImageResource(R.drawable.shield_unlocked)
                 } catch (e: Exception) {
                     Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_LONG).show()
                 }
@@ -115,71 +79,67 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    class EncryptAsyncTask(private val activity: WeakReference<MainActivity>) : AsyncTask<Void, Boolean, Boolean>() {
-        private val handler = Handler(Looper.getMainLooper())
-        private var decryptedMessage: String? = null
+    private fun handleOnGenerateKeyButtonClick() {
+        if (!TextUtils.isEmpty(plain_message_edit_text.text)) {
+            if (generate_key_button.text.toString() == getString(R.string.button_generate_encrypt)) {
+                generate_key_button.setText(R.string.button_encrypt)
+            }
+            try {
+                SecurePreferences.setValue(KEY, plain_message_edit_text.text.toString())
+                val decryptedMessage = SecurePreferences.getStringValue(KEY, "")
 
-        override fun doInBackground(vararg params: Void?): Boolean? {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                val activity = activity.get() ?: return false
-                val generateKeyButton = activity.generateKeyButton
-                val inputEditText = activity.inputEditText
-                if (generateKeyButton.text.toString() == activity.getString(R.string.button_generate_encrypt)) {
-                    generateKeyButton.setText(R.string.button_encrypt)
-                }
-                try {
-                    SecurePreferences.setValue(KEY, inputEditText.text.toString())
-                    decryptedMessage = SecurePreferences.getStringValue(KEY, "")
-                    if (BuildConfig.DEBUG) {
-                        Log.d(TAG, decryptedMessage!! + " ")
+                val fadeIn = AlphaAnimation(0f, 1f)
+                fadeIn.duration = 500
+                val fadeOut = AlphaAnimation(1f, 0f)
+                fadeOut.duration = 500
+
+                fadeOut.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationStart(animation: Animation) {}
+                    override fun onAnimationRepeat(animation: Animation) {}
+
+                    override fun onAnimationEnd(animation: Animation) {
+                        shield_image.setImageResource(R.drawable.shield_locked)
+                        shield_image.startAnimation(fadeIn)
+                        clear_field_button.isEnabled = true
+
+                        val finalMessage = String.format(getString(R.string.message_encrypted_decrypted,
+                                plain_message_edit_text.text.toString(), decryptedMessage))
+                        key_info_text_view.text = getSpannedText(finalMessage)
                     }
-                    return true
-                } catch (e: SecureStorageException) {
-                    handler.post({
-                        activity.handleException(e)
-                    })
-                    return false
-                }
+                })
+                shield_image.startAnimation(fadeOut)
+            } catch (e: SecureStorageException) {
+                handleException(e)
             }
-            return false
+        } else {
+            Toast.makeText(this@MainActivity, "Field cannot be empty", Toast.LENGTH_SHORT).show()
         }
+    }
 
-        override fun onPostExecute(result: Boolean?) {
-            val activity = activity.get() ?: return
-            val fadeIn = AlphaAnimation(0f, 1f)
-            fadeIn.duration = 500
-            val fadeOut = AlphaAnimation(1f, 0f)
-            fadeOut.duration = 500
+    private fun handleOnClearFieldButtonClick() {
+        SecurePreferences.removeValue(KEY)
+        plain_message_edit_text.setText("")
+        key_info_text_view.text = ""
+        clear_field_button.isEnabled = false
+        shield_image.setImageResource(R.drawable.shield_unlocked)
+    }
 
-            fadeOut.setAnimationListener(object : AnimationListener {
-
-                override fun onAnimationStart(animation: Animation) {}
-
-                override fun onAnimationRepeat(animation: Animation) {}
-
-                override fun onAnimationEnd(animation: Animation) {
-                    activity.shieldImageView.setImageResource(R.drawable.shield_locked)
-
-                    activity.shieldImageView.startAnimation(fadeIn)
-
-                    val keyInfoTextView = activity.keyInfoTextView
-                    val inputEditText = activity.inputEditText
-                    activity.clearFieldButton.isEnabled = true
-
-                    val finalMessage = String.format(activity.getString(R.string.message_encrypted_decrypted,
-                            inputEditText.text.toString(), decryptedMessage))
-                    keyInfoTextView.text = getSpannedText(finalMessage)
-                }
-            })
-            activity.shieldImageView.startAnimation(fadeOut)
+    private fun getSpannedText(text: String): Spanned {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
+        } else {
+            Html.fromHtml(text)
         }
+    }
 
-        private fun getSpannedText(text: String): Spanned {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                return Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT);
-            } else {
-                return Html.fromHtml(text);
-            }
+    private fun handleException(e: SecureStorageException) {
+        Log.e(TAG, e.message)
+        when (e.type) {
+            KEYSTORE_NOT_SUPPORTED_EXCEPTION -> Toast.makeText(this, R.string.error_not_supported, Toast.LENGTH_LONG).show()
+            KEYSTORE_EXCEPTION -> Toast.makeText(this, R.string.error_fatal, Toast.LENGTH_LONG).show()
+            CRYPTO_EXCEPTION -> Toast.makeText(this, R.string.error_encryption, Toast.LENGTH_LONG).show()
+            INTERNAL_LIBRARY_EXCEPTION -> Toast.makeText(this, R.string.error_library, Toast.LENGTH_LONG).show()
+            else -> return
         }
     }
 }
