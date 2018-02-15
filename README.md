@@ -13,85 +13,95 @@
 
 ### Introduction
 
-Storing Credentials securely on a Device is a must.
-To make that possible we have combined the Android Keystore for generating Cryptographic keys, and storing them securely and using those keys we encrypt the credentials and save them in the SharedPreferences.
+Storing credentials securely on a device is in many occasions necessary. You probably don't want to rely only on the separation of processes of the Android OS but make sure the stored values are also encrypted.
+To make that possible we have combined the Android Keystore and the SharedPreferences. The keystore is used for generating cryptographic keys, the values are then encrypted with these keys and subsequently securely stored in the SharedPreferences.
 
-The cool thing about that is that those generated keys are never exposed to the kernel when the device is equipped with a “Trusted Execution Environment”. A so called TEE is a secure area inside the main processor of a smartphone which runs code isolated from other processes. That means even if the device gets compromised or hacked those keys can’t be easily extracted. Already 80–90% of all modern Android phones out there are equipped with a TEE (mostly because it’s often used to play DRM protected material) and it even is a requirement for Google’s Android Nougat certification — so every new phone running Android Nougat will come with a TEE installed.
+The secure part about this solution is that those generated keys are never exposed to the kernel when the device is equipped with a “Trusted Execution Environment”. A so called TEE is a secure area inside the main processor of a smartphone which runs code isolated from other processes. That means even if the device gets compromised or hacked those keys can’t be extracted. Already 80–90% of all modern Android phones out there are equipped with a TEE (mostly because it’s often used to play DRM protected material) and it even is a requirement for Google’s Android Nougat certification — so every phone running Android Nougat and later will come with a TEE installed.
 
-We also use specific SharedPrefences only for the Secure Device Storage module, so as not to have conflicts with other possible SharedPreferences instances. This also means that the content of the SharedPreferences can only be read from the app where the module is implemented and not from other apps.
-
-Even if the credentials where to be gotten somehow, they would be in an encrypted form which is nearly-impposible to decrypt without having the Cryptographic key used to encrypt it, which as was stated earlier is pretty secure itself sitting in the TEE.
+SecureStorage uses its own dedicated private SharedPreferences to prevent conflicts with other possible SharedPreference instances and ensure that the content of the SecureStorage can only be accessed from the app which uses this library.
 
 ### Supported API's
 
 __Symmetric__ key generation and storage in the Android KeyStore is supported from __Android 6.0 (API Level 23) onwards.__
 __Asymmetric__ key generation and storage in the Android KeyStore is supported from __Android 4.3 (API Level 18) onwards.__
 
-To support more devices we have used the Assymetric key generation, which in the case of storing simple credentials is very secure and the potential lack of speed in contrast to symmetric key generation, is not noticeable.
+To support more devices SecureStorage uses for now the asymmetric key generation, which in the case of storing simple credentials is very secure and the potential lack of speed in contrast to symmetric key generation, is not noticeable. Nevertheless, make sure to move the execution into a background thread as encryption does take a little time.
 
 ### Usage
 
-Add the module to your apps build.gradle:
+Add the library to your apps build.gradle:
 
-```golang
-compile 'de.adorsys.android:securestoragelibrary:1.0.0'
+```groovy
+implementation "de.adorsys.android:securestoragelibrary:${latestSecureStorageVersion}"
 ```
 
-To store a string value in our __SecurePreferences__ you have to call:
-```java
-SecurePreferences.setValue("KEY", "PLAIN_MESSAGE");
+To store a string value in your __SecureStorage__ you have to call:
+```kotlin
+SecurePreferences.setValue("KEY", "PLAIN_MESSAGE")
 ```
 
 This works for every other primitive data type. So for storing a boolean value:
-```java
-SecurePreferences.setValue("KEY", true/false);
+```kotlin
+SecurePreferences.setValue("KEY", true/false)
 ```
 
 for int
-```java
-SecurePreferences.setValue("KEY", 100);
+```kotlin
+SecurePreferences.setValue("KEY", 100)
 ```
 
 for float and long
-```java
-SecurePreferences.setValue("KEY", 100.12345);
+```kotlin
+SecurePreferences.setValue("KEY", 100.12345)
 ```
 
 To retrieve a string value:
-```java
-SecurePreferences.getStringValue("KEY");
+```kotlin
+SecurePreferences.getStringValue("KEY", ""/null)
 ```
 
 And respectively for the other types
-```java
-SecurePreferences.getBooleanValue("KEY");
+```kotlin
+SecurePreferences.getBooleanValue("KEY", false/true)
 ```
-```java
-SecurePreferences.getIntValue("KEY");
+```kotlin
+SecurePreferences.getIntValue("KEY", 0)
 ```
-```java
-SecurePreferences.getFloatValue("KEY");
+```kotlin
+SecurePreferences.getFloatValue("KEY", 0F)
 ```
-```java
-SecurePreferences.getLongValue("KEY");
+```kotlin
+SecurePreferences.getLongValue("KEY", 0L)
 ```
 
 See if an entry exists in the SecurePreferences:
-```java
-SecurePreferences.contains("KEY");
+```kotlin
+SecurePreferences.contains("KEY")
 ```
 
 You can also remove an entry from the SecurePreferences:
-```java
-SecurePreferences.removeValue("KEY");
+```kotlin
+SecurePreferences.removeValue("KEY")
 ```
 
 Clearing the SecurePreferences and deleting the KeyPair:
-```java
-SecurePreferences.clearAllValues();
+```kotlin
+SecurePreferences.clearAllValues()
 ```
 
 Everything about the cryptographic keys such as generating, maintaining and usage is handled internally by the module, so you do not need to worry about it.
+
+If you want to keep track of changes in your SecureStorage you can register an OnSharedPreferencesChangeListener as follows:
+
+``` kotlin
+SecurePreferences.registerOnSharedPreferenceChangeListener { _, key -> 
+    // check if the key is the one you are listening for and react
+}
+```
+Unregister the listener as soon as you don't need it any more with
+``` kotlin
+SecurePreferences.unregisterOnSharedPreferenceChangeListener(listener)
+```
 
 
 ### Error handling
