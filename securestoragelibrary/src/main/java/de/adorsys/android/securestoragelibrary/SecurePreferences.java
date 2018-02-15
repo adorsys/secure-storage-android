@@ -16,7 +16,6 @@
 
 package de.adorsys.android.securestoragelibrary;
 
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,8 +25,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
-import static de.adorsys.android.securestoragelibrary.SecureStorageProvider.context;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION;
+import static de.adorsys.android.securestoragelibrary.SecureStorageProvider.context;
 
 public final class SecurePreferences {
     private static final String KEY_SHARED_PREFERENCES_NAME = "SecurePreferences";
@@ -133,10 +132,15 @@ public final class SecurePreferences {
         return res;
     }
 
+    public static boolean contains(@NonNull String key) {
+        SharedPreferences preferences = context.get()
+                .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        return preferences.contains(key);
+    }
+
     public static void removeValue(@NonNull String key) {
         removeSecureValue(key);
     }
-
 
     public static void clearAllValues() throws SecureStorageException {
         if (KeystoreTool.keyPairExists()) {
@@ -145,18 +149,23 @@ public final class SecurePreferences {
         clearAllSecureValues();
     }
 
-    public static boolean contains(@NonNull String key) {
+    public static void registerOnSharedPreferenceChangeListener(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
         SharedPreferences preferences = context.get()
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        return preferences.contains(key);
+        preferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
-    @SuppressLint("ApplySharedPref")
+    public static void unregisterOnSharedPreferenceChangeListener(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
+        SharedPreferences preferences = context.get()
+                .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        preferences.unregisterOnSharedPreferenceChangeListener(listener);
+    }
+
     private static void setSecureValue(@NonNull String key,
                                        @NonNull String value) {
         SharedPreferences preferences = context.get()
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        preferences.edit().putString(key, value).commit();
+        preferences.edit().putString(key, value).apply();
     }
 
     @Nullable
@@ -166,17 +175,15 @@ public final class SecurePreferences {
         return preferences.getString(key, null);
     }
 
-    @SuppressLint("ApplySharedPref")
     private static void removeSecureValue(@NonNull String key) {
         SharedPreferences preferences = context.get()
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        preferences.edit().remove(key).commit();
+        preferences.edit().remove(key).apply();
     }
 
-    @SuppressLint("ApplySharedPref")
     private static void clearAllSecureValues() {
         SharedPreferences preferences = context.get()
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        preferences.edit().clear().commit();
+        preferences.edit().clear().apply();
     }
 }
