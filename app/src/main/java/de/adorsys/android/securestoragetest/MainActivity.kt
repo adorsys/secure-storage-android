@@ -29,10 +29,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
-import android.widget.*
+import android.widget.Toast
 import de.adorsys.android.securestoragelibrary.SecurePreferences
 import de.adorsys.android.securestoragelibrary.SecureStorageException
 import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -40,24 +41,12 @@ class MainActivity : AppCompatActivity() {
         private val TAG = "LOGTAG"
     }
 
-    private lateinit var inputEditText: EditText
-    private lateinit var keyInfoTextView: TextView
-    private lateinit var generateKeyButton: Button
-    private lateinit var clearFieldButton: Button
-    private lateinit var shieldImageView: ImageView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        inputEditText = findViewById(R.id.plain_message_edit_text)
-        keyInfoTextView = findViewById(R.id.key_info_text_view)
-        generateKeyButton = findViewById(R.id.generate_key_button)
-        clearFieldButton = findViewById(R.id.clear_field_button)
-        shieldImageView = findViewById(R.id.shield_image)
-
-        generateKeyButton.setOnClickListener { handleOnGenerateKeyButtonClick() }
-        clearFieldButton.setOnClickListener { handleOnClearFieldButtonClick() }
+        generate_key_button.setOnClickListener { handleOnGenerateKeyButtonClick() }
+        clear_field_button.setOnClickListener { handleOnClearFieldButtonClick() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -72,10 +61,10 @@ class MainActivity : AppCompatActivity() {
                 try {
                     SecurePreferences.clearAllValues()
                     Toast.makeText(this@MainActivity, "SecurePreferences cleared and KeyPair deleted", Toast.LENGTH_SHORT).show()
-                    inputEditText.setText("")
-                    keyInfoTextView.text = ""
-                    clearFieldButton.isEnabled = false
-                    shieldImageView.setImageResource(R.drawable.shield_unlocked)
+                    plain_message_edit_text.setText("")
+                    key_info_text_view.text = ""
+                    clear_field_button.isEnabled = false
+                    shield_image.setImageResource(R.drawable.shield_unlocked)
                 } catch (e: Exception) {
                     Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_LONG).show()
                 }
@@ -91,12 +80,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleOnGenerateKeyButtonClick() {
-        if (!TextUtils.isEmpty(inputEditText.text)) {
-            if (generateKeyButton.text.toString() == getString(R.string.button_generate_encrypt)) {
-                generateKeyButton.setText(R.string.button_encrypt)
+        if (!TextUtils.isEmpty(plain_message_edit_text.text)) {
+            if (generate_key_button.text.toString() == getString(R.string.button_generate_encrypt)) {
+                generate_key_button.setText(R.string.button_encrypt)
             }
             try {
-                SecurePreferences.setValue(KEY, inputEditText.text.toString())
+                SecurePreferences.setValue(KEY, plain_message_edit_text.text.toString())
                 val decryptedMessage = SecurePreferences.getStringValue(KEY, "")
 
                 val fadeIn = AlphaAnimation(0f, 1f)
@@ -109,16 +98,16 @@ class MainActivity : AppCompatActivity() {
                     override fun onAnimationRepeat(animation: Animation) {}
 
                     override fun onAnimationEnd(animation: Animation) {
-                        shieldImageView.setImageResource(R.drawable.shield_locked)
-                        shieldImageView.startAnimation(fadeIn)
-                        clearFieldButton.isEnabled = true
+                        shield_image.setImageResource(R.drawable.shield_locked)
+                        shield_image.startAnimation(fadeIn)
+                        clear_field_button.isEnabled = true
 
                         val finalMessage = String.format(getString(R.string.message_encrypted_decrypted,
-                                inputEditText.text.toString(), decryptedMessage))
-                        keyInfoTextView.text = getSpannedText(finalMessage)
+                                plain_message_edit_text.text.toString(), decryptedMessage))
+                        key_info_text_view.text = getSpannedText(finalMessage)
                     }
                 })
-                shieldImageView.startAnimation(fadeOut)
+                shield_image.startAnimation(fadeOut)
             } catch (e: SecureStorageException) {
                 handleException(e)
             }
@@ -129,10 +118,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleOnClearFieldButtonClick() {
         SecurePreferences.removeValue(KEY)
-        inputEditText.setText("")
-        keyInfoTextView.text = ""
-        clearFieldButton.isEnabled = false
-        shieldImageView.setImageResource(R.drawable.shield_unlocked)
+        plain_message_edit_text.setText("")
+        key_info_text_view.text = ""
+        clear_field_button.isEnabled = false
+        shield_image.setImageResource(R.drawable.shield_unlocked)
     }
 
     private fun getSpannedText(text: String): Spanned {
