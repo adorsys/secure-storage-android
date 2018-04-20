@@ -21,7 +21,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -130,6 +133,18 @@ public final class SecurePreferences {
         }
 
         return res;
+    }
+
+    @NonNull
+    private static List<String> getAllKeys() {
+        SharedPreferences preferences = context.get()
+                .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        Map<String, ?> securedMap = preferences.getAll();
+        List<String> keyList = new ArrayList<>(securedMap.size());
+        for (Map.Entry<String, ?> entry : securedMap.entrySet()) {
+            keyList.add(entry.getKey());
+        }
+        return keyList;
     }
 
     public static boolean contains(@NonNull String key) {
