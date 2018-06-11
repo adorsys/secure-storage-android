@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -147,6 +148,11 @@ public final class SecurePreferences {
             KeystoreTool.deleteKeyPair();
         }
         clearAllSecureValues();
+    }
+
+    @NonNull
+    public static Map<String, ?> getAllKeysWithValues(SharedPreferences preferences) {
+        return preferences.getAll();
     }
 
     public static void registerOnSharedPreferenceChangeListener(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
