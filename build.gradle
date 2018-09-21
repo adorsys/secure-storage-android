@@ -1,13 +1,13 @@
 buildscript {
     ext.versionCode = 6
     ext.versionName = '1.0.2'
-	ext.kotlin_version = '1.2.21'
+	ext.kotlin_version = '1.2.70'
     repositories {
         jcenter()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
