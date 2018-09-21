@@ -32,7 +32,10 @@ import android.view.animation.Animation
 import android.widget.Toast
 import de.adorsys.android.securestoragelibrary.SecurePreferences
 import de.adorsys.android.securestoragelibrary.SecureStorageException
-import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.*
+import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION
+import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.INTERNAL_LIBRARY_EXCEPTION
+import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.KEYSTORE_EXCEPTION
+import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.KEYSTORE_NOT_SUPPORTED_EXCEPTION
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
