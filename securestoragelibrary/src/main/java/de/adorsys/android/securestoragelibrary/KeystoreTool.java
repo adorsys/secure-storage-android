@@ -17,7 +17,8 @@
 package de.adorsys.android.securestoragelibrary;
 
 import android.content.res.Configuration;
-import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.security.KeyPairGeneratorSpec;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -67,11 +68,12 @@ final class KeystoreTool {
     static String encryptMessage(@NonNull String plainMessage) throws SecureStorageException {
         try {
             Cipher input;
-            if (Build.VERSION.SDK_INT >= M) {
+            if (VERSION.SDK_INT >= M) {
                 input = Cipher.getInstance(KEY_TRANSFORMATION_ALGORITHM, KEY_CIPHER_MARSHMALLOW_PROVIDER);
             } else {
                 input = Cipher.getInstance(KEY_TRANSFORMATION_ALGORITHM, KEY_CIPHER_JELLYBEAN_PROVIDER);
             }
+
             input.init(Cipher.ENCRYPT_MODE, getPublicKey());
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -92,7 +94,7 @@ final class KeystoreTool {
     static String decryptMessage(@NonNull String encryptedMessage) throws SecureStorageException {
         try {
             Cipher output;
-            if (Build.VERSION.SDK_INT >= M) {
+            if (VERSION.SDK_INT >= M) {
                 output = Cipher.getInstance(KEY_TRANSFORMATION_ALGORITHM, KEY_CIPHER_MARSHMALLOW_PROVIDER);
             } else {
                 output = Cipher.getInstance(KEY_TRANSFORMATION_ALGORITHM, KEY_CIPHER_JELLYBEAN_PROVIDER);
@@ -121,11 +123,14 @@ final class KeystoreTool {
     }
 
     static boolean keyPairExists() throws SecureStorageException {
+        boolean keyExists;
         try {
-            return getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
+            keyExists = getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
         } catch (Exception e) {
             throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
         }
+
+        return keyExists;
     }
 
     static void generateKeyPair() throws SecureStorageException {
@@ -154,10 +159,16 @@ final class KeystoreTool {
 
     @Nullable
     private static PublicKey getPublicKey() throws SecureStorageException {
+        PublicKey publicKey;
         try {
             if (keyPairExists()) {
-                KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) getKeyStoreInstance().getEntry(KEY_ALIAS, null);
-                return privateKeyEntry.getCertificate().getPublicKey();
+                if (VERSION.SDK_INT >= VERSION_CODES.P) {
+                    // only for P and newer versions
+                    publicKey = getKeyStoreInstance().getCertificate(KEY_ALIAS).getPublicKey();
+                } else {
+                    KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) getKeyStoreInstance().getEntry(KEY_ALIAS, null);
+                    publicKey = privateKeyEntry.getCertificate().getPublicKey();
+                }
             } else {
                 if (BuildConfig.DEBUG) {
                     Log.e(KeystoreTool.class.getName(), context.get().getString(R.string.message_keypair_does_not_exist));
@@ -167,14 +178,22 @@ final class KeystoreTool {
         } catch (Exception e) {
             throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
         }
+
+        return publicKey;
     }
 
     @Nullable
     private static PrivateKey getPrivateKey() throws SecureStorageException {
+        PrivateKey privateKey;
         try {
             if (keyPairExists()) {
-                KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) getKeyStoreInstance().getEntry(KEY_ALIAS, null);
-                return privateKeyEntry.getPrivateKey();
+                if (VERSION.SDK_INT >= VERSION_CODES.P) {
+                    // only for P and newer versions
+                    privateKey = (PrivateKey) getKeyStoreInstance().getKey(KEY_ALIAS, null);
+                } else {
+                    KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) getKeyStoreInstance().getEntry(KEY_ALIAS, null);
+                    privateKey = privateKeyEntry.getPrivateKey();
+                }
             } else {
                 if (BuildConfig.DEBUG) {
                     Log.e(KeystoreTool.class.getName(), context.get().getString(R.string.message_keypair_does_not_exist));
@@ -184,6 +203,7 @@ final class KeystoreTool {
         } catch (Exception e) {
             throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
         }
+        return privateKey;
     }
 
     private static boolean isRTL() {

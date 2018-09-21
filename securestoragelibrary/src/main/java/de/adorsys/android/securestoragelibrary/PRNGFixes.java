@@ -41,8 +41,10 @@ final class PRNGFixes {
     private static final int VERSION_CODE_JELLY_BEAN_MR2 = 18;
     private static final byte[] BUILD_FINGERPRINT_AND_DEVICE_SERIAL = getBuildFingerprintAndDeviceSerial();
 
-    /** Hidden constructor to prevent instantiation. */
-    private PRNGFixes() {}
+    /**
+     * Hidden constructor to prevent instantiation.
+     */
+    private PRNGFixes() { }
 
     /**
      * Applies all fixes.
@@ -61,8 +63,8 @@ final class PRNGFixes {
      * @throws SecurityException if the fix is needed but could not be applied.
      */
     private static void applyOpenSSLFix() throws SecurityException {
-        if ((Build.VERSION.SDK_INT < VERSION_CODE_JELLY_BEAN)
-                || (Build.VERSION.SDK_INT > VERSION_CODE_JELLY_BEAN_MR2)) {
+        if (Build.VERSION.SDK_INT < VERSION_CODE_JELLY_BEAN
+                || Build.VERSION.SDK_INT > VERSION_CODE_JELLY_BEAN_MR2) {
             // No need to apply the fix
             return;
         }
@@ -106,10 +108,10 @@ final class PRNGFixes {
         // default, if not yet installed.
         Provider[] secureRandomProviders =
                 Security.getProviders("SecureRandom.SHA1PRNG");
-        if ((secureRandomProviders == null)
-                || (secureRandomProviders.length < 1)
-                || (!LinuxPRNGSecureRandomProvider.class.equals(
-                secureRandomProviders[0].getClass()))) {
+        if (secureRandomProviders == null
+                || secureRandomProviders.length < 1
+                || !LinuxPRNGSecureRandomProvider.class.equals(
+                secureRandomProviders[0].getClass())) {
             Security.insertProviderAt(new LinuxPRNGSecureRandomProvider(), 1);
         }
 
@@ -187,7 +189,7 @@ final class PRNGFixes {
         try {
             return result.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 encoding not supported");
+            throw new RuntimeException("UTF-8 encoding not supported"); //NOPMD
         }
     }
 
@@ -205,13 +207,13 @@ final class PRNGFixes {
          * Linux PRNG.
          *
          * Concurrency: Read requests to the underlying Linux PRNG are
-         * serialized (on lock) to ensure that multiple threads do not get
+         * serialized (on LOCK) to ensure that multiple threads do not get
          * duplicated PRNG output.
          */
 
         private static final File URANDOM_FILE = new File("/dev/urandom");
 
-        private static final Object lock = new Object();
+        private static final Object LOCK = new Object();
 
         /**
          * Input stream for reading from Linux PRNG or {@code null} if not yet
@@ -240,7 +242,7 @@ final class PRNGFixes {
         protected void engineSetSeed(byte[] bytes) {
             try {
                 OutputStream out;
-                synchronized (lock) {
+                synchronized (LOCK) {
                     out = getUrandomOutputStream();
                 }
                 out.write(bytes);
@@ -259,12 +261,12 @@ final class PRNGFixes {
         protected void engineNextBytes(byte[] bytes) {
             if (!seeded) {
                 // Mix in the device- and invocation-specific seed.
-                engineSetSeed(generateSeed());
+                engineSetSeed(generateSeed()); //NOPMD
             }
 
             try {
                 DataInputStream in;
-                synchronized (lock) {
+                synchronized (LOCK) {
                     in = getUrandomInputStream();
                 }
                 synchronized (in) {
@@ -284,7 +286,7 @@ final class PRNGFixes {
         }
 
         private DataInputStream getUrandomInputStream() {
-            synchronized (lock) {
+            synchronized (LOCK) {
                 if (urandomIn == null) {
                     // NOTE: Consider inserting a BufferedInputStream between
                     // DataInputStream and FileInputStream if you need higher
@@ -303,7 +305,7 @@ final class PRNGFixes {
         }
 
         private OutputStream getUrandomOutputStream() throws IOException {
-            synchronized (lock) {
+            synchronized (LOCK) {
                 if (urandomOut == null) {
                     urandomOut = new FileOutputStream(URANDOM_FILE);
                 }
