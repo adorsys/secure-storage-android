@@ -6,7 +6,6 @@ apply from: './checks.gradle'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
     defaultConfig {
         applicationId "de.adorsys.android.securestoragetest"
         minSdkVersion 18
