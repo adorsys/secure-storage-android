@@ -2,7 +2,7 @@
 
 ## Storing Credentials Securely on Android Devices
 
-[![Build Status](https://travis-ci.org/adorsys/secure-storage-android.svg?branch=master)](https://travis-ci.org/adorsys/secure-storage-android)  
+[![Build Status](https://travis-ci.org/adorsys/secure-storage-android.svg?branch=master)](https://travis-ci.org/adorsys/secure-storage-android)
 [![Download](https://api.bintray.com/packages/andev/adorsys/securestoragelibrary/images/download.svg) ](https://bintray.com/andev/adorsys/securestoragelibrary/_latestVersion) 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Secure%20Storage%20Android-blue.svg?style=flat)](https://android-arsenal.com/details/1/5648)
 [![API](https://img.shields.io/badge/API-18%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=18)
@@ -37,56 +37,56 @@ implementation "de.adorsys.android:securestoragelibrary:${latestSecureStorageVer
 
 To store a string value in your __SecureStorage__ you have to call:
 ```kotlin
-SecurePreferences.setValue("KEY", "PLAIN_MESSAGE")
+SecurePreferences.setValue(context, "KEY", "PLAIN_MESSAGE")
 ```
 
 This works for every other primitive data type. So for storing a boolean value:
 ```kotlin
-SecurePreferences.setValue("KEY", true/false)
+SecurePreferences.setValue(context, "KEY", true/false)
 ```
 
 for int
 ```kotlin
-SecurePreferences.setValue("KEY", 100)
+SecurePreferences.setValue(context, "KEY", 100)
 ```
 
 for float and long
 ```kotlin
-SecurePreferences.setValue("KEY", 100.12345)
+SecurePreferences.setValue(context, "KEY", 100.12345)
 ```
 
 To retrieve a string value:
 ```kotlin
-SecurePreferences.getStringValue("KEY", ""/null)
+SecurePreferences.getStringValue(context, "KEY", ""/null)
 ```
 
 And respectively for the other types
 ```kotlin
-SecurePreferences.getBooleanValue("KEY", false/true)
+SecurePreferences.getBooleanValue(context, "KEY", false/true)
 ```
 ```kotlin
-SecurePreferences.getIntValue("KEY", 0)
+SecurePreferences.getIntValue(context, "KEY", 0)
 ```
 ```kotlin
-SecurePreferences.getFloatValue("KEY", 0F)
+SecurePreferences.getFloatValue(context, "KEY", 0F)
 ```
 ```kotlin
-SecurePreferences.getLongValue("KEY", 0L)
+SecurePreferences.getLongValue(context, "KEY", 0L)
 ```
 
-See if an entry exists in the SecurePreferences:
+See if an entry exists in the SecurePreferences. Also returns `false` if the key pair does not exist:
 ```kotlin
-SecurePreferences.contains("KEY")
+SecurePreferences.contains(context, "KEY")
 ```
 
 You can also remove an entry from the SecurePreferences:
 ```kotlin
-SecurePreferences.removeValue("KEY")
+SecurePreferences.removeValue(context, "KEY")
 ```
 
 Clearing the SecurePreferences and deleting the KeyPair:
 ```kotlin
-SecurePreferences.clearAllValues()
+SecurePreferences.clearAllValues(context)
 ```
 
 Everything about the cryptographic keys such as generating, maintaining and usage is handled internally by the module, so you do not need to worry about it.
@@ -94,13 +94,14 @@ Everything about the cryptographic keys such as generating, maintaining and usag
 If you want to keep track of changes in your SecureStorage you can register an OnSharedPreferencesChangeListener as follows:
 
 ``` kotlin
-SecurePreferences.registerOnSharedPreferenceChangeListener { _, key -> 
+val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
     // check if the key is the one you are listening for and react
 }
+SecurePreferences.registerOnSharedPreferenceChangeListener(this, listener)
 ```
 Unregister the listener as soon as you don't need it any more with
 ``` kotlin
-SecurePreferences.unregisterOnSharedPreferenceChangeListener(listener)
+SecurePreferences.unregisterOnSharedPreferenceChangeListener(context, listener)
 ```
 
 
@@ -109,9 +110,9 @@ The library throws for everything a SecureStorageException. Within the SecureSto
 
 ```kotlin
 try {
-    SecurePreferences.setValue(KEY, "Secret")
+    SecurePreferences.setValue(context, KEY, "Secret")
     // or
-    val decryptedMessage = SecurePreferences.getStringValue(KEY, "")
+    val decryptedMessage = SecurePreferences.getStringValue(context, KEY, "")
 } catch (e: SecureStorageException) {
     handleException(e)
 }
@@ -131,21 +132,21 @@ private fun handleException(e: SecureStorageException) {
 ### Contributors:
 [@drilonreqica](https://github.com/drilonreqica)
 
-[@itsmortoncornelius](https://github.com/itsmortoncornelius)
+[@luckyhandler](https://github.com/luckyhandler)
 
 ### Want to know more:
 
-These links cover security aspect of the android keystore:  
-https://developer.android.com/training/articles/keystore.html#SecurityFeatures  
-https://source.android.com/security/keystore/  
-https://codingquestion.blogspot.de/2016/09/how-to-use-android-keystore-api-with.html  
-http://nelenkov.blogspot.de/2012/05/storing-application-secrets-in-androids.html  
-http://nelenkov.blogspot.de/2015/06/keystore-redesign-in-android-m.html  
-http://www.androidauthority.com/use-android-keystore-store-passwords-sensitive-information-623779/  
+These links cover security aspect of the android keystore:
+<https://developer.android.com/training/articles/keystore.html#SecurityFeatures>
+<https://source.android.com/security/keystore/>
+<https://codingquestion.blogspot.de/2016/09/how-to-use-android-keystore-api-with.html>
+<http://nelenkov.blogspot.de/2012/05/storing-application-secrets-in-androids.html>
+<http://nelenkov.blogspot.de/2015/06/keystore-redesign-in-android-m.html>
+<http://www.androidauthority.com/use-android-keystore-store-passwords-sensitive-information-623779/>  
 
-This link covers security aspect of the android storage:  
-https://developer.android.com/guide/topics/data/data-storage.html  
-http://stackoverflow.com/a/26077852/3392276  
+This link covers security aspect of the android storage:
+<https://developer.android.com/guide/topics/data/data-storage.html>
+<http://stackoverflow.com/a/26077852/3392276>
 
 ### Screenshots:
 
