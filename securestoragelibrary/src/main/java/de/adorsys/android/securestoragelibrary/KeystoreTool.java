@@ -33,8 +33,10 @@ import java.math.BigInteger;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -123,14 +125,13 @@ final class KeystoreTool {
     }
 
     static boolean keyPairExists() throws SecureStorageException {
-        boolean keyExists;
         try {
-            keyExists = getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
-        } catch (Exception e) {
+            return getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
+        } catch (NoSuchAlgorithmException e) {
             throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
+        } catch (KeyStoreException | UnrecoverableKeyException e) {
+            return false;
         }
-
-        return keyExists;
     }
 
     static void generateKeyPair(@NonNull Context context) throws SecureStorageException {
@@ -178,7 +179,6 @@ final class KeystoreTool {
         } catch (Exception e) {
             throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
         }
-
         return publicKey;
     }
 
@@ -196,7 +196,6 @@ final class KeystoreTool {
                 }
             } else {
                 if (BuildConfig.DEBUG) {
-
                     Log.e(KeystoreTool.class.getName(), context.getString(R.string.message_keypair_does_not_exist));
                 }
                 throw new SecureStorageException(context.getString(R.string.message_keypair_does_not_exist), null, INTERNAL_LIBRARY_EXCEPTION);
