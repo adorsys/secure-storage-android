@@ -2,8 +2,7 @@ package de.adorsys.android.securestoragetest;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-
-import junit.framework.Assert;
+import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,6 +18,9 @@ import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class EncryptDecryptTest {
@@ -33,7 +35,7 @@ public class EncryptDecryptTest {
     }
 
     @Test
-    public void testEncryptionWorked() throws SecureStorageException {
+    public void testEncryptionWorked() {
         final String testString = "TEST_STRING";
         final String KEY = "TEMPTAG";
 
@@ -41,11 +43,18 @@ public class EncryptDecryptTest {
                 .perform(scrollTo())
                 .perform(typeText(testString))
                 .perform(closeSoftKeyboard());
+
+        Log.d("SecureStorageTest Time", String.valueOf(System.currentTimeMillis()));
+
         onView(withId(R.id.generate_key_button))
                 .perform(scrollTo())
                 .perform(click());
 
-        Assert.assertNotNull(SecurePreferences.getStringValue(KEY, null));
-        Assert.assertEquals(testString, SecurePreferences.getStringValue(KEY, ""));
+        assertNotNull(SecurePreferences.getStringValue(KEY, null));
+        assertTrue(SecurePreferences.contains(KEY));
+
+        Log.d("SecureStorageTest Time", String.valueOf(System.currentTimeMillis()));
+
+        assertEquals(testString, SecurePreferences.getStringValue(KEY, ""));
     }
 }
