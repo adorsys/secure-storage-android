@@ -18,12 +18,13 @@ package de.adorsys.android.securestoragelibrary;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static android.content.Context.MODE_PRIVATE;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION;
@@ -151,7 +152,11 @@ public final class SecurePreferences {
         Context applicationContext = context.getApplicationContext();
         SharedPreferences preferences = applicationContext
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        return preferences.contains(key);
+        try {
+            return preferences.contains(key) && KeystoreTool.keyPairExists();
+        } catch (SecureStorageException e) {
+            return false;
+        }
     }
 
     public static void removeValue(@NonNull Context context,
