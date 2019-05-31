@@ -39,15 +39,16 @@ public final class SecurePreferences {
     public static void setValue(@NonNull Context context,
                                 @NonNull String key,
                                 @NonNull String value) throws SecureStorageException {
+        Context applicationContext = context.getApplicationContext();
         if (!KeystoreTool.keyPairExists()) {
-            KeystoreTool.generateKeyPair(context);
+            KeystoreTool.generateKeyPair(applicationContext);
         }
 
-        String transformedValue = KeystoreTool.encryptMessage(context, value);
+        String transformedValue = KeystoreTool.encryptMessage(applicationContext, value);
         if (TextUtils.isEmpty(transformedValue)) {
             throw new SecureStorageException(context.getString(R.string.message_problem_encryption), null, CRYPTO_EXCEPTION);
         } else {
-            setSecureValue(context, key, transformedValue);
+            setSecureValue(applicationContext, key, transformedValue);
         }
     }
 
@@ -90,10 +91,11 @@ public final class SecurePreferences {
     public static String getStringValue(@NonNull Context context,
                                         @NonNull String key,
                                         @Nullable String defValue) {
-        String result = getSecureValue(context, key);
+        Context applicationContext = context.getApplicationContext();
+        String result = getSecureValue(applicationContext, key);
         try {
             if (!TextUtils.isEmpty(result)) {
-                return KeystoreTool.decryptMessage(context, result);
+                return KeystoreTool.decryptMessage(applicationContext, result);
             } else {
                 return defValue;
             }
@@ -146,33 +148,38 @@ public final class SecurePreferences {
 
     public static boolean contains(@NonNull Context context,
                                    @NonNull String key) {
-        SharedPreferences preferences = context
+        Context applicationContext = context.getApplicationContext();
+        SharedPreferences preferences = applicationContext
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         return preferences.contains(key);
     }
 
     public static void removeValue(@NonNull Context context,
                                    @NonNull String key) {
-        removeSecureValue(context, key);
+        Context applicationContext = context.getApplicationContext();
+        removeSecureValue(applicationContext, key);
     }
 
     public static void clearAllValues(@NonNull Context context) throws SecureStorageException {
+        Context applicationContext = context.getApplicationContext();
         if (KeystoreTool.keyPairExists()) {
-            KeystoreTool.deleteKeyPair(context);
+            KeystoreTool.deleteKeyPair(applicationContext);
         }
-        clearAllSecureValues(context);
+        clearAllSecureValues(applicationContext);
     }
 
     public static void registerOnSharedPreferenceChangeListener(@NonNull Context context,
                                                                 @NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
-        SharedPreferences preferences = context
+        Context applicationContext = context.getApplicationContext();
+        SharedPreferences preferences = applicationContext
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         preferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
     public static void unregisterOnSharedPreferenceChangeListener(@NonNull Context context,
                                                                   @NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
-        SharedPreferences preferences = context
+        Context applicationContext = context.getApplicationContext();
+        SharedPreferences preferences = applicationContext
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
