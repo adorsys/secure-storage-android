@@ -31,7 +31,7 @@ public class EncryptDecryptTest {
     @Before
     public void setUp() throws SecureStorageException {
         // Set an empty value in securePreferences to create key for usage in test.
-        SecurePreferences.setValue("EMPTY", "empty");
+        SecurePreferences.setValue(activityRule.getActivity(), "EMPTY", "empty");
     }
 
     @Test
@@ -50,11 +50,11 @@ public class EncryptDecryptTest {
                 .perform(scrollTo())
                 .perform(click());
 
-        assertNotNull(SecurePreferences.getStringValue(KEY, null));
-        assertTrue(SecurePreferences.contains(KEY));
+        assertNotNull(SecurePreferences.getStringValue(activityRule.getActivity(), KEY, null));
+        assertTrue(SecurePreferences.contains(activityRule.getActivity(), KEY));
 
         Log.d("SecureStorageTest Time", String.valueOf(System.currentTimeMillis()));
 
-        assertEquals(testString, SecurePreferences.getStringValue(KEY, ""));
+        assertEquals(testString, SecurePreferences.getStringValue(activityRule.getActivity(), KEY, ""));
     }
 }
