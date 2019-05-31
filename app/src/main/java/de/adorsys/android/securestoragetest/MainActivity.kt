@@ -20,7 +20,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.text.Html
 import android.text.Spanned
 import android.text.TextUtils
@@ -40,8 +40,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     companion object {
-        private val KEY = "TEMPTAG"
-        private val TAG = "LOGTAG"
+        private const val KEY = "TEMPTAG"
+        private const val TAG = "LOGTAG"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_clear_all -> {
                 try {
-                    SecurePreferences.clearAllValues()
+                    SecurePreferences.clearAllValues(this@MainActivity)
                     Toast.makeText(this@MainActivity, "SecurePreferences cleared and KeyPair deleted", Toast.LENGTH_SHORT).show()
                     plain_message_edit_text.setText("")
                     key_info_text_view.text = ""
@@ -88,8 +88,8 @@ class MainActivity : AppCompatActivity() {
                 generate_key_button.setText(R.string.button_encrypt)
             }
             try {
-                SecurePreferences.setValue(KEY, plain_message_edit_text.text.toString())
-                val decryptedMessage = SecurePreferences.getStringValue(KEY, "")
+                SecurePreferences.setValue(this@MainActivity, KEY, plain_message_edit_text.text.toString())
+                val decryptedMessage = SecurePreferences.getStringValue(this@MainActivity, KEY, "")
 
                 val fadeIn = AlphaAnimation(0f, 1f)
                 fadeIn.duration = 500
@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleOnClearFieldButtonClick() {
-        SecurePreferences.removeValue(KEY)
+        SecurePreferences.removeValue(this@MainActivity, KEY)
         plain_message_edit_text.setText("")
         key_info_text_view.text = ""
         clear_field_button.isEnabled = false

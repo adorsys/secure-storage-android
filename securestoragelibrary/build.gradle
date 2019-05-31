@@ -6,7 +6,6 @@ apply from: './checks.gradle'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
 
     defaultConfig {
         minSdkVersion 18
@@ -30,7 +29,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0-rc02'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
 }
 
 ext {
