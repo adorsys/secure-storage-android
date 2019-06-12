@@ -127,8 +127,14 @@ final class KeystoreTool {
 
     static boolean keyPairExists() throws SecureStorageException {
         try {
-            return getKeyStoreInstance().getKey(KEY_ALIAS, null) != null
-                    && getKeyStoreInstance().getCertificate(KEY_ALIAS) != null;
+            if (VERSION.SDK_INT >= VERSION_CODES.P) {
+                // public key is retrieved via getCertificate
+                return getKeyStoreInstance().getCertificate(KEY_ALIAS) != null
+                // private key is retrieved via getKey
+                        && getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
+            } else {
+                return getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
+            }
         } catch (NoSuchAlgorithmException e) {
             throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
         } catch (KeyStoreException | UnrecoverableKeyException e) {
