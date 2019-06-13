@@ -21,8 +21,6 @@ import android.content.res.Configuration;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.security.KeyPairGeneratorSpec;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -46,6 +44,9 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.security.auth.x500.X500Principal;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static android.os.Build.VERSION_CODES.M;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION;
@@ -126,7 +127,14 @@ final class KeystoreTool {
 
     static boolean keyPairExists() throws SecureStorageException {
         try {
-            return getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
+            if (VERSION.SDK_INT >= VERSION_CODES.P) {
+                // public key is retrieved via getCertificate
+                return getKeyStoreInstance().getCertificate(KEY_ALIAS) != null
+                // private key is retrieved via getKey
+                        && getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
+            } else {
+                return getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
+            }
         } catch (NoSuchAlgorithmException e) {
             throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
         } catch (KeyStoreException | UnrecoverableKeyException e) {
