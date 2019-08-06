@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [ "$TRAVIS_BRANCH" == "master" ]; then
     echo -e "\033[0;32m Start clean module \033[0m"
     ./gradlew :securestorage:clean
