@@ -1,5 +1,0 @@
-<resources>
-    <string name="message_keypair_already_exists">KeyPair Already Exists!</string>
-    <string name="message_keypair_does_not_exist">KeyPair does not exist in Keystore</string>
-    <string name="message_problem_encryption">Problem during Encryption</string>
-</resources>
