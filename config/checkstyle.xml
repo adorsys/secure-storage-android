@@ -16,7 +16,6 @@
     Authors: Max Vetrenko, Ruslan Diachenko, Roman Ivanov.
 
  -->
-
 <module name="Checker">
     <property name="charset" value="UTF-8"/>
 

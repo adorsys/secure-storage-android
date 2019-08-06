@@ -148,7 +148,7 @@ final class KeystoreTool {
     static void generateKeyPair(@NonNull Context context) throws SecureStorageException {
         // Create new key if needed
         if (!keyPairExists()) {
-            if (VERSION.SDK_INT >= VERSION_CODES.M) {
+            if (VERSION.SDK_INT >= M) {
                 generateKeyPairForMarshmallow(context);
             } else {
                 PRNGFixes.apply();

@@ -1,50 +1,32 @@
 language: android
+
 dist: trusty
 
-group: edge
-jdk: oraclejdk8
-branches:
-  only:
-  - master
-  - develop
+jdk:
+  - oraclejdk8
+
+script:
+  - ./gradlew clean :securestoragelibrary:check --parallel
+
+before_install:
+  # Install SDK license so Android Gradle plugin can install deps.
+  - mkdir "$ANDROID_HOME/licenses" || true
+  - echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
+
+after_success:
+  - .buildscript/deploy_snapshot.sh
+
+notifications:
+  email: false
+
+sudo: true
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
 cache:
   directories:
-    - ${TRAVIS_BUILD_DIR}/gradle/caches/
-    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
-env:
-  global:
-    - ANDROID_API_LEVEL=28
-    - EMULATOR_API_LEVEL=21
-    - ANDROID_BUILD_TOOLS_VERSION=28.0.3
-    - ANDROID_ABI=armeabi-v7a
-    - ANDROID_TAG=google_apis
-android:
-  components:
-  - build-tools-$ANDROID_BUILD_TOOLS_VERSION
-  - android-$ANDROID_API_LEVEL
-  - android-$EMULATOR_API_LEVEL
-  - extra-android-m2repository
-  - extra-google-m2repository
-  - extra-android-support
-  - extra-google-google_play_services
-  - sys-img-armeabi-v7a-google_apis-$ANDROID_API_LEVEL
-  - sys-img-armeabi-v7a-google_apis-$EMULATOR_API_LEVEL
-  sudo: false
-  licenses:
-  - android-sdk-preview-license-.+
-  - android-sdk-license-.+
-  - google-gdk-license-.+
-  - intel-android-extra-license.+
-  cache:
-    directories:
-    - $HOME/.gradle/caches/2.8
-    - $HOME/.gradle/caches/jars-1
-    - $HOME/.gradle/daemon
-    - $HOME/.gradle/native
-    - $HOME/.gradle/wrapper
-before_install:
-    - yes | sdkmanager "platforms;android-28"
-script:
-  - ./code-check.sh
-after_success:
-  - ./bintray-upload.sh
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache

@@ -32,4 +32,8 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    checkstyle {
+        toolVersion "7.6.1"
+    }
 }
