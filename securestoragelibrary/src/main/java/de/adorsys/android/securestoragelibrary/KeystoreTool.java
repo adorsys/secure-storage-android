@@ -21,6 +21,8 @@ import android.content.res.Configuration;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.security.KeyPairGeneratorSpec;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -43,10 +45,13 @@ import java.util.Locale;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import static android.os.Build.VERSION_CODES.M;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION;
@@ -130,7 +135,7 @@ final class KeystoreTool {
             if (VERSION.SDK_INT >= VERSION_CODES.P) {
                 // public key is retrieved via getCertificate
                 return getKeyStoreInstance().getCertificate(KEY_ALIAS) != null
-                // private key is retrieved via getKey
+                        // private key is retrieved via getKey
                         && getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
             } else {
                 return getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
@@ -145,7 +150,11 @@ final class KeystoreTool {
     static void generateKeyPair(@NonNull Context context) throws SecureStorageException {
         // Create new key if needed
         if (!keyPairExists()) {
-            generateAsymmetricKeyPair(context);
+            if (VERSION.SDK_INT >= VERSION_CODES.M) {
+                generateKeyPairForMarshmallow(context);
+            } else {
+                generateKeyPairUnderMarshmallow(context);
+            }
         } else if (BuildConfig.DEBUG) {
             Log.e(KeystoreTool.class.getName(),
                     context.getString(R.string.message_keypair_already_exists));
@@ -171,13 +180,7 @@ final class KeystoreTool {
         PublicKey publicKey;
         try {
             if (keyPairExists()) {
-                if (VERSION.SDK_INT >= VERSION_CODES.P) {
-                    // only for P and newer versions
-                    publicKey = getKeyStoreInstance().getCertificate(KEY_ALIAS).getPublicKey();
-                } else {
-                    KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) getKeyStoreInstance().getEntry(KEY_ALIAS, null);
-                    publicKey = privateKeyEntry.getCertificate().getPublicKey();
-                }
+                publicKey = getKeyStoreInstance().getCertificate(KEY_ALIAS).getPublicKey();
             } else {
                 if (BuildConfig.DEBUG) {
                     Log.e(KeystoreTool.class.getName(), context.getString(R.string.message_keypair_does_not_exist));
@@ -195,13 +198,7 @@ final class KeystoreTool {
         PrivateKey privateKey;
         try {
             if (keyPairExists()) {
-                if (VERSION.SDK_INT >= VERSION_CODES.P) {
-                    // only for P and newer versions
-                    privateKey = (PrivateKey) getKeyStoreInstance().getKey(KEY_ALIAS, null);
-                } else {
-                    KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) getKeyStoreInstance().getEntry(KEY_ALIAS, null);
-                    privateKey = privateKeyEntry.getPrivateKey();
-                }
+                privateKey = (PrivateKey) getKeyStoreInstance().getKey(KEY_ALIAS, null);
             } else {
                 if (BuildConfig.DEBUG) {
                     Log.e(KeystoreTool.class.getName(), context.getString(R.string.message_keypair_does_not_exist));
@@ -219,7 +216,28 @@ final class KeystoreTool {
         return config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
     }
 
-    private static void generateAsymmetricKeyPair(@NonNull Context context) throws SecureStorageException {
+    @RequiresApi(api = M)
+    private static void generateKeyPairForMarshmallow(@NonNull Context context) throws SecureStorageException {
+        try {
+            if (isRTL(context)) {
+                Locale.setDefault(Locale.US);
+            }
+
+            KeyPairGenerator generator = KeyPairGenerator.getInstance(KEY_ENCRYPTION_ALGORITHM, KEY_KEYSTORE_NAME);
+
+            KeyGenParameterSpec keyGenParameterSpec =
+                    new KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                            .build();
+
+            generator.initialize(keyGenParameterSpec);
+            generator.generateKeyPair();
+        } catch (Exception e) {
+            throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
+        }
+    }
+
+    private static void generateKeyPairUnderMarshmallow(@NonNull Context context) throws SecureStorageException {
         try {
             if (isRTL(context)) {
                 Locale.setDefault(Locale.US);
