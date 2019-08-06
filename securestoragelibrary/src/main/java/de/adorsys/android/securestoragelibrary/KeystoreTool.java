@@ -45,8 +45,6 @@ import java.util.Locale;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 
 import androidx.annotation.NonNull;
@@ -153,6 +151,7 @@ final class KeystoreTool {
             if (VERSION.SDK_INT >= VERSION_CODES.M) {
                 generateKeyPairForMarshmallow(context);
             } else {
+                PRNGFixes.apply();
                 generateKeyPairUnderMarshmallow(context);
             }
         } else if (BuildConfig.DEBUG) {
