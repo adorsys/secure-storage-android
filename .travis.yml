@@ -14,7 +14,7 @@ before_install:
   - echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
 
 after_success:
-  - .buildscript/deploy_snapshot.sh
+  - .buildscripts/deploy_snapshot.sh
 
 notifications:
   email: false
