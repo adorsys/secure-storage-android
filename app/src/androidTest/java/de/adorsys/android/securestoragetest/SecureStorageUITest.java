@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
+
 import de.adorsys.android.securestoragelibrary.SecurePreferences;
 import de.adorsys.android.securestoragelibrary.SecureStorageException;
 
@@ -24,6 +25,9 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class SecureStorageUITest {
+    private static final String KEY = "KEY_STRING";
+    private static final String VALUE = "VALUE_STRING";
+
     @Rule
     public ActivityTestRule activityRule = new ActivityTestRule<>(
             MainActivity.class);
@@ -31,17 +35,14 @@ public class SecureStorageUITest {
     @Before
     public void setUp() throws SecureStorageException {
         // Set an empty value in securePreferences to create key for usage in test.
-        SecurePreferences.setValue(activityRule.getActivity(), "EMPTY", "empty");
+        SecurePreferences.setValue(activityRule.getActivity(), KEY, VALUE);
     }
 
     @Test
     public void testEncryptionWorked() {
-        final String testString = "TEST_STRING";
-        final String KEY = "TEMPTAG";
-
         onView(withId(R.id.plain_message_edit_text))
                 .perform(scrollTo())
-                .perform(typeText(testString))
+                .perform(typeText(VALUE))
                 .perform(closeSoftKeyboard());
 
         Log.d("SecureStorageTest Time", String.valueOf(System.currentTimeMillis()));
@@ -55,6 +56,6 @@ public class SecureStorageUITest {
 
         Log.d("SecureStorageTest Time", String.valueOf(System.currentTimeMillis()));
 
-        assertEquals(testString, SecurePreferences.getStringValue(activityRule.getActivity(), KEY, ""));
+        assertEquals(VALUE, SecurePreferences.getStringValue(activityRule.getActivity(), KEY, ""));
     }
 }
