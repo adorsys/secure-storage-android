@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
-public class EncryptDecryptTest {
+public class SecureStorageUITest {
     @Rule
     public ActivityTestRule activityRule = new ActivityTestRule<>(
             MainActivity.class);
