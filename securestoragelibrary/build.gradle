@@ -56,5 +56,7 @@ ext {
     allLicenses = ["Apache-2.0"]
 }
 
+tasks.withType(Javadoc).all { enabled = false }
+
 apply from: 'https://raw.githubusercontent.com/adorsys/jcenter-distribution/master/installv.gradle'
 apply from: 'https://raw.githubusercontent.com/adorsys/jcenter-distribution/master/bintrayv.gradle'
