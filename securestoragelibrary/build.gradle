@@ -5,15 +5,16 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply from: './checks.gradle'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode versionCode
         versionName "${versionName}"
 
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -28,8 +29,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 }
 
 ext {
