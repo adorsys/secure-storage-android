@@ -4,11 +4,9 @@ on:
   pull_request:
     branches:
       - '*'           # matches every branch
-      - '!gh-pages'   # excludes gh-pages
   push:
     branches:
       - '*'           # matches every branch
-      - '!gh-pages'   # excludes gh-pages
 
 jobs:
   assemble:
