@@ -2,11 +2,11 @@ name: SecureStorage Github Actions CI
 
 on:
   pull_request:
-    branches:
-      - '*'           # matches every branch
+    branches-ignore:
+      - 'gh-pages'
   push:
-    branches:
-      - '*'           # matches every branch
+    branches-ignore:
+      - 'gh-pages'
 
 jobs:
   assemble:
