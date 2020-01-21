@@ -45,7 +45,7 @@ jobs:
           script: ./gradlew app:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=de.adorsys.android.securestoragetest.SecureStorageLogicTest --stacktrace
 
 
-  publish:
-    needs: [assemble, test]
-    name: Publish SecureStorage
-    runs-on: macOS-latest
+#  publish:
+#    needs: [assemble, test]
+#    name: Publish SecureStorage
+#    runs-on: macOS-latest
