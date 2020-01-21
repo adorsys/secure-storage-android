@@ -28,7 +28,7 @@ jobs:
     strategy:
       matrix:
         api-level: [21, 22, 23, 24, 25, 28, 29]
-        target: [default, google_apis]
+        target: [default]
     steps:
       - name: checkout
         uses: actions/checkout@v2
