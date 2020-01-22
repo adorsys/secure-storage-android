@@ -50,6 +50,7 @@ jobs:
   publish:
     needs: [assemble, test]
     name: Publish SecureStorage
+    if: github.ref == 'master'
     runs-on: macOS-latest
     steps:
       - name: Checkout
