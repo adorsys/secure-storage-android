@@ -41,8 +41,7 @@ jobs:
           target: ${{ matrix.target }}
           arch: x86_64
           profile: Nexus 6
-          script: ./gradlew app:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=de.adorsys.android.securestoragetest.SecureStorageLogicTest --stacktrace
-
+          script: ./gradlew connectedAndroidTest --stacktrace
 
   publish:
     needs: [assemble, test]
