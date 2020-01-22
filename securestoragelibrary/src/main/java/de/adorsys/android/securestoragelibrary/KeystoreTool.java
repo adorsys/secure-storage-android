@@ -19,7 +19,6 @@ package de.adorsys.android.securestoragelibrary;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
@@ -130,14 +129,7 @@ final class KeystoreTool {
 
     static boolean keyPairExists() throws SecureStorageException {
         try {
-            if (VERSION.SDK_INT >= VERSION_CODES.P) {
-                // public key is retrieved via getCertificate
-                return getKeyStoreInstance().getCertificate(KEY_ALIAS) != null
-                        // private key is retrieved via getKey
-                        && getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
-            } else {
-                return getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
-            }
+            return getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
         } catch (NoSuchAlgorithmException e) {
             throw new SecureStorageException(e.getMessage(), e, KEYSTORE_EXCEPTION);
         } catch (KeyStoreException | UnrecoverableKeyException e) {
