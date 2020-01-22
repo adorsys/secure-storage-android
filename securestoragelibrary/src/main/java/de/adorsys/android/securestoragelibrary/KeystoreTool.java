@@ -131,7 +131,6 @@ final class KeystoreTool {
     static boolean keyPairExists() throws SecureStorageException {
         try {
             if (VERSION.SDK_INT >= VERSION_CODES.P) {
-                return getKeyStoreInstance().getKey(KEY_ALIAS, null) != null;
                 // public key is retrieved via getCertificate
                 return getKeyStoreInstance().getCertificate(KEY_ALIAS) != null
                         // private key is retrieved via getKey

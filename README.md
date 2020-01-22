@@ -2,7 +2,7 @@
 
 ## Storing Credentials Securely on Android Devices
 
-[![Build Status](https://travis-ci.org/adorsys/secure-storage-android.svg?branch=master)](https://travis-ci.org/adorsys/secure-storage-android)
+[![Actions Status](https://github.com/adorsys/secure-storage-android/workflows/SecureStorage%20Github%20Actions%20CI/badge.svg)](https://github.com/adorsys/secure-storage-android/actions)
 [![Download](https://api.bintray.com/packages/andev/adorsys/securestoragelibrary/images/download.svg) ](https://bintray.com/andev/adorsys/securestoragelibrary/_latestVersion) 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Secure%20Storage%20Android-blue.svg?style=flat)](https://android-arsenal.com/details/1/5648)
 [![API](https://img.shields.io/badge/API-18%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=18)
