@@ -44,6 +44,13 @@ jobs:
 
 
   publish:
+    on:
+      push:
+        branches:
+          - master
+      pull_request:
+        branches:
+          - master
     needs: [assemble, test]
     name: Publish SecureStorage
     runs-on: macOS-latest
