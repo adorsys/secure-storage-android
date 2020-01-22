@@ -5,15 +5,16 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply from: './checks.gradle'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode versionCode
         versionName "${versionName}"
 
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -22,14 +23,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 }
 
 ext {
@@ -55,6 +55,8 @@ ext {
     licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
     allLicenses = ["Apache-2.0"]
 }
+
+tasks.withType(Javadoc).all { enabled = false }
 
 apply from: 'https://raw.githubusercontent.com/adorsys/jcenter-distribution/master/installv.gradle'
 apply from: 'https://raw.githubusercontent.com/adorsys/jcenter-distribution/master/bintrayv.gradle'

@@ -19,7 +19,6 @@ package de.adorsys.android.securestoragelibrary;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;

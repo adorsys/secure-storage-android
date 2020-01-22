@@ -16,134 +16,89 @@
 
 package de.adorsys.android.securestoragetest
 
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
+import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import android.text.Html
-import android.text.Spanned
-import android.text.TextUtils
-import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import de.adorsys.android.securestoragelibrary.SecurePreferences
-import de.adorsys.android.securestoragelibrary.SecureStorageException
-import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION
-import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.INTERNAL_LIBRARY_EXCEPTION
-import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.KEYSTORE_EXCEPTION
-import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.KEYSTORE_NOT_SUPPORTED_EXCEPTION
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        private const val KEY = "TEMPTAG"
-        private const val TAG = "LOGTAG"
-    }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        generate_key_button.setOnClickListener { handleOnGenerateKeyButtonClick() }
-        clear_field_button.setOnClickListener { handleOnClearFieldButtonClick() }
-    }
+        button_store.setOnClickListener {
+            when {
+                edit_text_store_key.text.isNullOrEmpty() || edit_text_store_value.text.isNullOrEmpty() ->
+                    Toast.makeText(
+                            this@MainActivity,
+                            "Fields cannot be empty",
+                            Toast.LENGTH_SHORT
+                    ).show()
+                else -> {
+                    SecurePreferences.setValue(
+                            this@MainActivity,
+                            edit_text_store_key.text.toString(),
+                            edit_text_store_value.text.toString()
+                    )
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
+                    text_view_stored_data.text =
+                            "Value: ${edit_text_store_value.text} successfully saved for key: ${edit_text_store_key.text}"
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_clear_all -> {
-                try {
-                    SecurePreferences.clearAllValues(this@MainActivity)
-                    Toast.makeText(this@MainActivity, "SecurePreferences cleared and KeyPair deleted", Toast.LENGTH_SHORT).show()
-                    plain_message_edit_text.setText("")
-                    key_info_text_view.text = ""
-                    clear_field_button.isEnabled = false
-                    shield_image.setImageResource(R.drawable.shield_unlocked)
-                } catch (e: Exception) {
-                    Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_LONG).show()
+                    edit_text_store_key.text.clear()
+                    edit_text_store_value.text.clear()
+
+                    text_view_deleted_data.text = ""
+                    text_view_retrieved_data.text = ""
                 }
-                return true
             }
-            R.id.action_info -> {
-                startActivity(Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://github.com/adorsys/secure-storage-android/blob/master/README.md")))
-                return true
+        }
+
+        button_get.setOnClickListener {
+            when {
+                edit_text_get_key.text.isNullOrEmpty() -> Toast.makeText(
+                        this@MainActivity,
+                        "Field cannot be empty",
+                        Toast.LENGTH_SHORT
+                ).show()
+                else -> {
+                    val decryptedData =
+                            SecurePreferences.getStringValue(
+                                    this@MainActivity,
+                                    edit_text_get_key.text.toString(),
+                                    "FAILED"
+                            )
+                    text_view_retrieved_data.text =
+                            "Decrypted Data for key: ${edit_text_get_key.text} = $decryptedData"
+
+                    edit_text_get_key.text.clear()
+                    text_view_deleted_data.text = ""
+                    text_view_stored_data.text = ""
+                }
             }
-            else -> return super.onOptionsItemSelected(item)
         }
-    }
 
-    private fun handleOnGenerateKeyButtonClick() {
-        if (!TextUtils.isEmpty(plain_message_edit_text.text)) {
-            if (generate_key_button.text.toString() == getString(R.string.button_generate_encrypt)) {
-                generate_key_button.setText(R.string.button_encrypt)
+        button_remove.setOnClickListener {
+            when {
+                edit_text_remove_key.text.isNullOrEmpty() -> Toast.makeText(
+                        this@MainActivity,
+                        "Field cannot be empty",
+                        Toast.LENGTH_SHORT
+                ).show()
+                else -> {
+                    SecurePreferences.removeValue(this@MainActivity, edit_text_remove_key.text.toString())
+
+                    text_view_deleted_data.text = "Value for key: ${edit_text_remove_key.text} successfully deleted"
+
+                    edit_text_remove_key.text.clear()
+                    text_view_retrieved_data.text = ""
+                    text_view_stored_data.text = ""
+                }
             }
-            try {
-                SecurePreferences.setValue(this@MainActivity, KEY, plain_message_edit_text.text.toString())
-                val decryptedMessage = SecurePreferences.getStringValue(this@MainActivity, KEY, "")
-
-                val fadeIn = AlphaAnimation(0f, 1f)
-                fadeIn.duration = 500
-                val fadeOut = AlphaAnimation(1f, 0f)
-                fadeOut.duration = 500
-
-                fadeOut.setAnimationListener(object : Animation.AnimationListener {
-                    override fun onAnimationStart(animation: Animation) {}
-                    override fun onAnimationRepeat(animation: Animation) {}
-
-                    override fun onAnimationEnd(animation: Animation) {
-                        shield_image.setImageResource(R.drawable.shield_locked)
-                        shield_image.startAnimation(fadeIn)
-                        clear_field_button.isEnabled = true
-
-                        val finalMessage = String.format(getString(R.string.message_encrypted_decrypted,
-                                plain_message_edit_text.text.toString(), decryptedMessage))
-                        key_info_text_view.text = getSpannedText(finalMessage)
-                    }
-                })
-                shield_image.startAnimation(fadeOut)
-            } catch (e: SecureStorageException) {
-                handleException(e)
-            }
-        } else {
-            Toast.makeText(this@MainActivity, "Field cannot be empty", Toast.LENGTH_SHORT).show()
         }
-    }
 
-    private fun handleOnClearFieldButtonClick() {
-        SecurePreferences.removeValue(this@MainActivity, KEY)
-        plain_message_edit_text.setText("")
-        key_info_text_view.text = ""
-        clear_field_button.isEnabled = false
-        shield_image.setImageResource(R.drawable.shield_unlocked)
-    }
-
-    private fun getSpannedText(text: String): Spanned {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
-        } else {
-            @Suppress("DEPRECATION")
-            Html.fromHtml(text)
-        }
-    }
-
-    private fun handleException(e: SecureStorageException) {
-        Log.e(TAG, e.message)
-        when (e.type) {
-            KEYSTORE_NOT_SUPPORTED_EXCEPTION -> Toast.makeText(this, R.string.error_not_supported, Toast.LENGTH_LONG).show()
-            KEYSTORE_EXCEPTION -> Toast.makeText(this, R.string.error_fatal, Toast.LENGTH_LONG).show()
-            CRYPTO_EXCEPTION -> Toast.makeText(this, R.string.error_encryption, Toast.LENGTH_LONG).show()
-            INTERNAL_LIBRARY_EXCEPTION -> Toast.makeText(this, R.string.error_library, Toast.LENGTH_LONG).show()
-            else -> return
-        }
     }
 }

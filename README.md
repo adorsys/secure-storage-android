@@ -2,7 +2,7 @@
 
 ## Storing Credentials Securely on Android Devices
 
-[![Build Status](https://travis-ci.org/adorsys/secure-storage-android.svg?branch=master)](https://travis-ci.org/adorsys/secure-storage-android)
+[![Actions Status](https://github.com/adorsys/secure-storage-android/workflows/SecureStorage%20Github%20Actions%20CI/badge.svg)](https://github.com/adorsys/secure-storage-android/actions)
 [![Download](https://api.bintray.com/packages/andev/adorsys/securestoragelibrary/images/download.svg) ](https://bintray.com/andev/adorsys/securestoragelibrary/_latestVersion) 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Secure%20Storage%20Android-blue.svg?style=flat)](https://android-arsenal.com/details/1/5648)
 [![API](https://img.shields.io/badge/API-18%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=18)
@@ -130,7 +130,7 @@ private fun handleException(e: SecureStorageException) {
 ```
 
 ### Contributors:
-[@drilonreqica](https://github.com/drilonreqica)
+[@drilonrecica](https://github.com/drilonrecica)
 
 [@luckyhandler](https://github.com/luckyhandler)
 
@@ -147,11 +147,3 @@ These links cover security aspect of the android keystore:
 This link covers security aspect of the android storage:
 <https://developer.android.com/guide/topics/data/data-storage.html>
 <http://stackoverflow.com/a/26077852/3392276>
-
-### Screenshots:
-
-Default Layout             |  After Encryption         |  Extra Options
-:-------------------------:|:-------------------------:|:-------------------------:
-![](https://github.com/adorsys/secure-storage-android/blob/master/screenshots/screenshot-1.jpg)  |  ![](https://github.com/adorsys/secure-storage-android/blob/master/screenshots/screenshot-2.jpg) |  ![](https://github.com/adorsys/secure-storage-android/blob/master/screenshots/screenshot-3.jpg)
-
-
