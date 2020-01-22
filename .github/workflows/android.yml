@@ -13,9 +13,9 @@ jobs:
     name: AssembleDebug SecureStorage
     runs-on: macOS-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v1
-      - name: set up JDK 1.8
+      - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
@@ -31,9 +31,9 @@ jobs:
         api-level: [21, 22, 23, 25, 29]
         target: [default]
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: set up JDK 1.8
+      - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
@@ -52,9 +52,9 @@ jobs:
     name: Publish SecureStorage
     runs-on: macOS-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: set up JDK 1.8
+      - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
