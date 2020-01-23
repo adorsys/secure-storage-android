@@ -2,10 +2,12 @@ name: SecureStorage Tag Workflow
 
 on:
   push:
-    tags:
-      - '*'
     branches-ignore:
       - 'gh-pages'
+    branches:
+      - master
+    tags:
+      - '*'
 
 jobs:
   assemble:
