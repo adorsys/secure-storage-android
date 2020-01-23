@@ -56,4 +56,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Publish SecureStorage
+        env:
+          BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
+          BINTRAY_USERNAME: andev
         run: bash .buildscripts/build-and-deploy-snapshot.sh
