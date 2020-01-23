@@ -1,8 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-
-// Apply static code analysis configuration
-apply from: './checks.gradle'
+apply plugin: 'com.novoda.bintray-release'
+apply from: './checks.gradle' // Apply static code analysis configuration
 
 android {
     compileSdkVersion 29
@@ -12,7 +10,6 @@ android {
         targetSdkVersion 29
         versionCode versionCode
         versionName "${versionName}"
-
     }
 
     buildTypes {
@@ -28,35 +25,21 @@ android {
     }
 }
 
+tasks.withType(Javadoc).all { enabled = false }
+
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
 }
 
-ext {
-    bintrayRepo = 'adorsys'
-    bintrayName = 'securestoragelibrary'
-
-    publishedGroupId = 'de.adorsys.android'
-    libraryName = 'securestoragelibrary'
-    artifact = 'securestoragelibrary'
-
-    libraryDescription = 'securestoragelibrary'
-
-    siteUrl = 'https://www.adorsys.de/'
-    gitUrl = 'https://github.com/adorsys/secure-storage-android.git'
-
-    libraryVersion = "${versionName}"
-
-    developerId = 'andev'
-    developerName = 'Andev Adorsys'
-    developerEmail = 'adorsys.andev@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
+publish {
+    def groupProjectID = 'de.adorsys.android'
+    def artifactProjectID = 'securestoragelibrary'
+    def publishVersionID = "${versionName}"
+    userOrg = 'andev'
+    repoName = 'adorsys'
+    groupId = groupProjectID
+    artifactId = artifactProjectID
+    publishVersion = publishVersionID
+    desc = 'securestoragelibrary'
+    website = 'https://github.com/adorsys/secure-storage-android'
 }
-
-tasks.withType(Javadoc).all { enabled = false }
-
-apply from: 'https://raw.githubusercontent.com/adorsys/jcenter-distribution/master/installv.gradle'
-apply from: 'https://raw.githubusercontent.com/adorsys/jcenter-distribution/master/bintrayv.gradle'
