@@ -7,4 +7,4 @@ echo -e "\033[0;32m ./gradlew :securestoragelibrary:install \033[0m"
 ./gradlew :securestoragelibrary:build --stacktrace
 
 echo -e "\033[0;32m ./gradlew :securestoragelibrary:bintrayUpload -PbintrayUser=BINTRAY_USERNAME -PbintrayKey=BINTRAY_API_KEY -PdryRun=false \033[0m"
-./gradlew :securestoragelibrary:bintrayUpload -PbintrayUser=BINTRAY_USERNAME -PbintrayKey=BINTRAY_API_KEY -PdryRun=false --stacktrace
+./gradlew :securestoragelibrary:bintrayUpload -PbintrayUser="$BINTRAY_USERNAME" -PbintrayKey="$BINTRAY_API_KEY" -PdryRun=false --stacktrace
