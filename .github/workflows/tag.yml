@@ -2,8 +2,6 @@ name: SecureStorage Tag Workflow
 
 on:
   push:
-    branches-ignore:
-      - 'gh-pages'
     branches:
       - master
     tags:
