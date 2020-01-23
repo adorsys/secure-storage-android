@@ -1,7 +1,7 @@
-name: SecureStorage Github Actions CI
+name: SecureStorage Pull Request Workflow
 
 on:
-  push:
+  pull_request:
     branches-ignore:
       - 'gh-pages'
 
@@ -42,21 +42,3 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: ./gradlew connectedAndroidTest --stacktrace
-
-  publish:
-    needs: [assemble, test]
-    name: Publish SecureStorage
-    if: github.ref == 'refs/heads/master'
-    runs-on: macOS-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: Publish SecureStorage
-        env:
-          BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
-          BINTRAY_USERNAME: andev
-        run: bash .buildscripts/build-and-deploy-snapshot.sh
