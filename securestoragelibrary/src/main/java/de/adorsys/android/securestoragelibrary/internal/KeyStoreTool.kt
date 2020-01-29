@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package de.adorsys.android.securestoragelibrary.internal
 
 import android.annotation.SuppressLint
@@ -67,11 +69,11 @@ internal object KeyStoreTool {
     internal fun encryptValue(context: Context, key: String, value: String): String {
         return when {
             apiVersionMAndAbove(context) -> KeyStoreToolApi23.encryptValue(
-                context,
-                getKeyStoreInstance(),
-                getCipher(context),
-                key,
-                value
+                    context,
+                    getKeyStoreInstance(),
+                    getCipher(context),
+                    key,
+                    value
             )
             else -> KeyStoreToolApi21.encryptValue(context, getKeyStoreInstance(), getCipher(context), key, value)
         }
@@ -80,11 +82,11 @@ internal object KeyStoreTool {
     internal fun decryptValue(context: Context, key: String, value: String): String? {
         return when {
             apiVersionMAndAbove(context) -> KeyStoreToolApi23.decryptValue(
-                context,
-                getKeyStoreInstance(),
-                getCipher(context),
-                key,
-                value
+                    context,
+                    getKeyStoreInstance(),
+                    getCipher(context),
+                    key,
+                    value
             )
             else -> KeyStoreToolApi21.decryptValue(context, getKeyStoreInstance(), getCipher(context), key, value)
         }
@@ -112,7 +114,7 @@ internal object KeyStoreTool {
 
     @RequiresApi(Build.VERSION_CODES.M)
     internal fun isKeyInsideSecureHardware(): Boolean =
-        KeyStoreToolApi23.isKeyInsideSecureHardware(getKeyStoreInstance())
+            KeyStoreToolApi23.isKeyInsideSecureHardware(getKeyStoreInstance())
 
     @SuppressLint("CommitPrefEdits")
     internal fun setInstallApiVersionFlag(context: Context, forceSet: Boolean = false) {
@@ -121,7 +123,7 @@ internal object KeyStoreTool {
         when {
             forceSet -> {
                 SecureStorage.getSharedPreferencesInstance(context).edit()
-                    .putBoolean(KEY_INSTALLATION_API_VERSION_UNDER_M, true).execute()
+                        .putBoolean(KEY_INSTALLATION_API_VERSION_UNDER_M, true).execute()
                 return
             }
             else -> {
@@ -130,9 +132,9 @@ internal object KeyStoreTool {
                 when {
                     Build.VERSION.SDK_INT < Build.VERSION_CODES.M
                             && !installationApiVersionUnderM -> SecureStorage.getSharedPreferencesInstance(
-                        context
+                            context
                     ).edit()
-                        .putBoolean(KEY_INSTALLATION_API_VERSION_UNDER_M, true).execute()
+                            .putBoolean(KEY_INSTALLATION_API_VERSION_UNDER_M, true).execute()
                 }
             }
         }
@@ -151,10 +153,10 @@ internal object KeyStoreTool {
             return keyStore
         } catch (e: Exception) {
             throw SecureStorageException(
-                if (!e.message.isNullOrBlank()) e.message!!
-                else SecureStorageException.MESSAGE_ERROR_WHILE_GETTING_KEYSTORE_INSTANCE,
-                e,
-                KEYSTORE_EXCEPTION
+                    if (!e.message.isNullOrBlank()) e.message!!
+                    else SecureStorageException.MESSAGE_ERROR_WHILE_GETTING_KEYSTORE_INSTANCE,
+                    e,
+                    KEYSTORE_EXCEPTION
             )
         }
     }
@@ -172,10 +174,10 @@ internal object KeyStoreTool {
 
     private fun apiVersionMAndAbove(context: Context): Boolean {
         val installationApiVersionUnderM =
-            SecureStorage.getSharedPreferencesInstance(context).contains(KEY_INSTALLATION_API_VERSION_UNDER_M)
+                SecureStorage.getSharedPreferencesInstance(context).contains(KEY_INSTALLATION_API_VERSION_UNDER_M)
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !installationApiVersionUnderM
     }
 
     private fun isRTL(context: Context): Boolean =
-        context.resources.configuration.layoutDirection == LAYOUT_DIRECTION_RTL
+            context.resources.configuration.layoutDirection == LAYOUT_DIRECTION_RTL
 }

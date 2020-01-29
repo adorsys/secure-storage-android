@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<!--suppress CheckTagEmptyBody -->
+<SmellBaseline>
+  <Blacklist></Blacklist>
+  <Whitelist></Whitelist>
+</SmellBaseline>

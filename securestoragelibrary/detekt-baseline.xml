@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<!--suppress CheckTagEmptyBody -->
+<SmellBaseline>
+  <Blacklist></Blacklist>
+  <Whitelist>
+    <ID>TooGenericExceptionCaught:KeyStoreTool.kt$KeyStoreTool$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:KeyStoreToolApi21.kt$KeyStoreToolApi21$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:KeyStoreToolApi23.kt$KeyStoreToolApi23$e: Exception</ID>
+  </Whitelist>
+</SmellBaseline>
