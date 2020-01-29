@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Secure Storage</string>
+    <string name="app_name">SecureStorage 2.0</string>
     <string name="hint_key">Key</string>
     <string name="hint_value">Value</string>
     <string name="button_store">Store</string>

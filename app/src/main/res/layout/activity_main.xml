@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        tools:context=".MainActivity">
+
+        <LinearLayout android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:text="@string/headline_store_data"/>
+
+            <View android:layout_width="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:layout_height="2dp"/>
+
+        </LinearLayout>
+
+        <EditText android:layout_width="match_parent"
+            android:inputType="text"
+            android:hint="@string/hint_key"
+            android:maxLines="1"
+            android:lines="1"
+            android:layout_marginTop="16dp"
+            android:id="@+id/edit_text_store_key"
+            android:layout_height="wrap_content"
+            android:autofillHints="false"
+            tools:targetApi="o"/>
+
+        <EditText android:layout_width="match_parent"
+            android:inputType="text"
+            android:hint="@string/hint_value"
+            android:maxLines="1"
+            android:lines="1"
+            android:id="@+id/edit_text_store_value"
+            android:layout_height="wrap_content"
+            android:autofillHints="false"
+            tools:targetApi="o"/>
+
+        <Button android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="@string/button_store"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/button_store"
+            android:layout_height="wrap_content"/>
+
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:id="@+id/text_view_stored_data"
+            android:textStyle="italic|bold"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/colorPrimary"
+            style="@style/TextAppearance.AppCompat.Medium"/>
+
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:text="@string/headline_get_data"/>
+
+            <View android:layout_width="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:layout_height="2dp"/>
+
+        </LinearLayout>
+
+        <EditText android:layout_width="match_parent"
+            android:inputType="text"
+            android:hint="@string/hint_key"
+            android:layout_marginTop="16dp"
+            android:maxLines="1"
+            android:lines="1"
+            android:id="@+id/edit_text_get_key"
+            android:layout_height="wrap_content"
+            android:autofillHints="false"
+            tools:targetApi="o"/>
+
+        <Button android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="@string/button_get"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/button_get"
+            android:layout_height="wrap_content"/>
+
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:id="@+id/text_view_retrieved_data"
+            android:textStyle="italic|bold"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/colorPrimary"
+            style="@style/TextAppearance.AppCompat.Medium"/>
+
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:text="@string/headline_remove_data"/>
+
+            <View android:layout_width="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:layout_height="2dp"/>
+
+        </LinearLayout>
+
+        <EditText android:layout_width="match_parent"
+            android:inputType="text"
+            android:hint="@string/hint_key"
+            android:layout_marginTop="16dp"
+            android:maxLines="1"
+            android:lines="1"
+            android:id="@+id/edit_text_remove_key"
+            android:layout_height="wrap_content"
+            android:autofillHints="false"
+            tools:targetApi="o"/>
+
+        <Button android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="@string/button_delete"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/button_remove"
+            android:layout_height="wrap_content"/>
+
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:id="@+id/text_view_deleted_data"
+            android:textStyle="italic|bold"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/colorPrimary"
+            style="@style/TextAppearance.AppCompat.Medium"/>
+
+    </LinearLayout>
+</ScrollView>
