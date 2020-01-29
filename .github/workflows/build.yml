@@ -18,4 +18,6 @@ jobs:
         with:
           java-version: 1.8
       - name: AssembleDebug SecureStorage
-        run: bash ./gradlew assembleDebug --stacktrace
+        run: |
+          bash ./gradlew detekt --stacktrace
+          bash ./gradlew assembleDebug --stacktrace
