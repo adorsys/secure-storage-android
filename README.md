@@ -1,3 +1,6 @@
+## NOTICE - SecureStorage1 is no longer being maintained and has been replaced by [SecureStorage 2.0](https://github.com/adorsys/secure-storage-android/tree/master). SecureStorage1 can still be used up to version 1.2.4 and it also resides in our [legacy branch](https://github.com/adorsys/secure-storage-android/tree/legacy/secure-storage-1)
+## 
+
 # Secure Device Storage - Android
 
 ## Storing Credentials Securely on Android Devices
