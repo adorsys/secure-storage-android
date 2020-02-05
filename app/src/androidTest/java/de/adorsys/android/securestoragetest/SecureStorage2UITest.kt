@@ -1,11 +1,12 @@
 package de.adorsys.android.securestoragetest
 
 import android.util.Log
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
-import de.adorsys.android.securestoragelibrary.SecurePreferences
+import de.adorsys.android.securestoragelibrary.SecureStorage
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -16,7 +17,7 @@ import org.junit.runner.RunWith
  */
 @Suppress("LocalVariableName")
 @RunWith(AndroidJUnit4ClassRunner::class)
-open class SecureStorageUITest : SecureStorageBaseTest() {
+open class SecureStorage2UITest : SecureStorage2BaseTest() {
 
     @Test
     fun testUI() {
@@ -24,11 +25,14 @@ open class SecureStorageUITest : SecureStorageBaseTest() {
         val VALUE = "KEY_VALUE"
         val context = activityRule.activity.applicationContext
 
-        SecurePreferences.clearAllValues(context)
+        SecureStorage.clearAllValuesAndDeleteKeys(context)
+
+        // Generate SecureStorage keys
+        SecureStorage.initSecureStorageKeys(context)
 
         // Store Data Section
 
-        onView(withId(R.id.edit_text_store_key))
+        Espresso.onView(withId(R.id.edit_text_store_key))
                 .perform(scrollTo())
                 .perform(typeText(KEY))
                 .perform(closeSoftKeyboard())
@@ -48,7 +52,7 @@ open class SecureStorageUITest : SecureStorageBaseTest() {
 
         // Get Data Section
 
-        onView(withId(R.id.edit_text_get_key))
+        Espresso.onView(withId(R.id.edit_text_get_key))
                 .perform(scrollTo())
                 .perform(typeText(KEY))
                 .perform(closeSoftKeyboard())
@@ -63,7 +67,7 @@ open class SecureStorageUITest : SecureStorageBaseTest() {
 
         // Delete Data Section
 
-        onView(withId(R.id.edit_text_remove_key))
+        Espresso.onView(withId(R.id.edit_text_remove_key))
                 .perform(scrollTo())
                 .perform(typeText(KEY))
                 .perform(closeSoftKeyboard())
@@ -76,6 +80,6 @@ open class SecureStorageUITest : SecureStorageBaseTest() {
 
         Log.d("SecureStorage2UITest Get Data End Time", System.currentTimeMillis().toString())
 
-        SecurePreferences.clearAllValues(context)
+        SecureStorage.clearAllValuesAndDeleteKeys(context)
     }
 }
