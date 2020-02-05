@@ -21,8 +21,6 @@ package de.adorsys.android.securestoragelibrary.internal
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import android.view.View.LAYOUT_DIRECTION_RTL
 import de.adorsys.android.securestoragelibrary.SecureStorage
 import de.adorsys.android.securestoragelibrary.SecureStorage.KEY_INSTALLATION_API_VERSION_UNDER_M
@@ -35,7 +33,6 @@ import javax.crypto.Cipher
 
 @SuppressLint("NewApi")
 internal object KeyStoreTool {
-    internal const val KEY_SECURE_HARDWARE_ALIAS = "KEY_SECURE_HARDWARE_ALIAS"
 
     private const val KEY_KEYSTORE_NAME = "AndroidKeyStore"
     private const val KEY_ASYMMETRIC_TRANSFORMATION_ALGORITHM = "RSA/ECB/PKCS1Padding"
@@ -52,7 +49,7 @@ internal object KeyStoreTool {
                     isRTL(context) -> Locale.setDefault(Locale.US)
                 }
                 when {
-                    apiVersionMAndAbove(context) -> KeyStoreToolApi23.generateKey()
+                    apiVersionMAndAbove(context) -> KeyStoreToolApi23.generateKey(context)
                     else -> KeyStoreToolApi21.generateKey(context)
                 }
             }
@@ -99,23 +96,6 @@ internal object KeyStoreTool {
         }
     }
 
-    // For API 23 - Create AES Key, see if it is inside SecureHardware then return the answer
-    // For API 21 & 22 see below
-    // Android uses the Fingerprint Hardware Abstraction Layer (HAL) to connect to a vendor-specific
-    // library and fingerprint hardware, e.g. a fingerprint sensor.
-    // A vendor-specific HAL implementation must use the communication protocol required by a TEE
-    // https://source.android.com/security/authentication/fingerprint-hal
-    internal fun deviceHasSecureHardwareSupport(context: Context): Boolean {
-        return when {
-            apiVersionMAndAbove(context) -> KeyStoreToolApi23.deviceHasSecureHardwareSupport()
-            else -> FingerprintManagerCompat.from(context).isHardwareDetected
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    internal fun isKeyInsideSecureHardware(): Boolean =
-            KeyStoreToolApi23.isKeyInsideSecureHardware(getKeyStoreInstance())
-
     @SuppressLint("CommitPrefEdits")
     internal fun setInstallApiVersionFlag(context: Context, forceSet: Boolean = false) {
         val preferences = SecureStorage.getSharedPreferencesInstance(context)
@@ -138,6 +118,12 @@ internal object KeyStoreTool {
                 }
             }
         }
+    }
+
+    internal fun apiVersionMAndAbove(context: Context): Boolean {
+        val installationApiVersionUnderM =
+                SecureStorage.getSharedPreferencesInstance(context).contains(KEY_INSTALLATION_API_VERSION_UNDER_M)
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !installationApiVersionUnderM
     }
 
     @Throws(SecureStorageException::class)
@@ -170,12 +156,6 @@ internal object KeyStoreTool {
             else -> // https://stackoverflow.com/a/36394097/3392276
                 Cipher.getInstance(KEY_ASYMMETRIC_TRANSFORMATION_ALGORITHM)
         }
-    }
-
-    private fun apiVersionMAndAbove(context: Context): Boolean {
-        val installationApiVersionUnderM =
-                SecureStorage.getSharedPreferencesInstance(context).contains(KEY_INSTALLATION_API_VERSION_UNDER_M)
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !installationApiVersionUnderM
     }
 
     private fun isRTL(context: Context): Boolean =
