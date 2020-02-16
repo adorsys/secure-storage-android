@@ -21,17 +21,17 @@ jobs:
         run: |
           bash ./gradlew detekt --stacktrace
           bash ./gradlew assembleDebug --stacktrace
-      - name: Slack Notification
+      - name: Notify Slack
         if: success()
-        uses: rtCamp/action-slack-notify@v2.0.0
+        uses: drilonrecica/action-slack-notify@0.0.1
         env:
           SLACK_CHANNEL: csi-builds
           SLACK_COLOR: '#3278BD'
           SLACK_ICON: https://avatars1.githubusercontent.com/u/1760904?s=200&v=4?size=48
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-      - name: Slack Notification
+      - name: Notify Slack
         if: failure()
-        uses: rtCamp/action-slack-notify@v2.0.0
+        uses: drilonrecica/action-slack-notify@0.0.1
         env:
           SLACK_CHANNEL: csi-builds
           SLACK_COLOR: '#8d0000'
