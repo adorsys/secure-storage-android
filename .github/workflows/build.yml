@@ -23,7 +23,7 @@ jobs:
           bash ./gradlew assembleDebug --stacktrace
       - name: Notify Slack
         if: success()
-        uses: drilonrecica/action-slack-notify@0.0.3
+        uses: drilonrecica/action-slack-notify@0.0.4
         env:
           SLACK_CHANNEL: csi-builds
           SLACK_COLOR: '#3278BD'
@@ -31,7 +31,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
       - name: Notify Slack
         if: failure()
-        uses: drilonrecica/action-slack-notify@0.0.3
+        uses: drilonrecica/action-slack-notify@0.0.4
         env:
           SLACK_CHANNEL: csi-builds
           SLACK_COLOR: '#8d0000'
