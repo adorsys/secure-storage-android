@@ -19,8 +19,7 @@ class App : Application() {
         SecureStorage.init(
                 context = applicationContext,
                 encryptionKeyAlias = "SecureStorage2Key",
-                x500Principal = "CN=SecureStorage2 , O=Adorsys GmbH & Co. KG., C=Germany",
-                useOnlyWithHardwareSupport = false
+                x500Principal = "CN=SecureStorage2 , O=Adorsys GmbH & Co. KG., C=Germany"
         )
 
         // In Espresso tests we initialize the SecureStorageKeys in the test class

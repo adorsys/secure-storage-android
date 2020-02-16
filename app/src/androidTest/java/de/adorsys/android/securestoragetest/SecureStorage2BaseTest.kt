@@ -13,7 +13,7 @@ open class SecureStorage2BaseTest {
     @Rule
     @JvmField
     var activityRule = ActivityTestRule(
-        MainActivity::class.java
+            MainActivity::class.java
     )
 
     @Before
@@ -21,10 +21,9 @@ open class SecureStorage2BaseTest {
     fun setUp() {
         // Init library parameters
         SecureStorage.init(
-            context = activityRule.activity.applicationContext,
-            encryptionKeyAlias = "SecureStorage2Key",
-            x500Principal = "CN=SecureStorage2 , O=Adorsys GmbH & Co. KG., C=Germany",
-            useOnlyWithHardwareSupport = false
+                context = activityRule.activity.applicationContext,
+                encryptionKeyAlias = "SecureStorage2Key",
+                x500Principal = "CN=SecureStorage2 , O=Adorsys GmbH & Co. KG., C=Germany"
         )
 
         activityRule.activity.runOnUiThread {
@@ -34,11 +33,11 @@ open class SecureStorage2BaseTest {
 
             //turn the screen on
             activityRule.activity.window.addFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                        or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                        or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                        or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                            or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                            or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                            or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                            or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
             )
         }
     }
