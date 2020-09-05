@@ -20,7 +20,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
@@ -117,7 +119,7 @@ public final class SecurePreferences {
     }
 
     /**
-     * Takes plain string value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
+     * Takes Set(type: String) value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
      *
      * @param context Context is used internally
      * @param key     Key used to identify the stored value in SecureStorage
@@ -216,7 +218,7 @@ public final class SecurePreferences {
     }
 
     /**
-     * Gets encrypted int value for given key  from the SecureStorage on the Android Device, decrypts it and returns it
+     * Gets encrypted Set(type: String) value for given key  from the SecureStorage on the Android Device, decrypts it and returns it
      *
      * @param context  Context is used internally
      * @param key      Key used to identify the stored value in SecureStorage
@@ -322,6 +324,24 @@ public final class SecurePreferences {
         preferences.edit().putString(key, value).apply();
     }
 
+    /**
+     * Gets all all keys and decrypted String values as a pairs (key : decrypted String value)
+     *
+     * @param context  Context is used internally
+     * @return A Map with pairs (key : decrypted String value)
+     */
+    @NonNull
+    public static Map<String, String> getAll(@NonNull Context context) {
+        Set<String> keys = getAllKeys(context);
+
+        Map<String, String> res = new HashMap<>();
+        for (String key : keys) {
+            res.put(key, getStringValue(context, key, ""));
+        }
+
+        return res;
+    }
+
     @Nullable
     private static String getSecureValue(@NonNull Context context,
                                          @NonNull String key) {
@@ -341,5 +361,11 @@ public final class SecurePreferences {
         SharedPreferences preferences = context
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         preferences.edit().clear().apply();
+    }
+
+    private static Set<String> getAllKeys(@NonNull Context context) {
+        SharedPreferences preferences = context
+                .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        return preferences.getAll().keySet();
     }
 }
