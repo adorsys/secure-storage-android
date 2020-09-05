@@ -174,4 +174,18 @@ open class SecureStorageLogicTest : SecureStorageBaseTest() {
         // Delete keys and clear SecureStorage
         SecurePreferences.clearAllValues(context)
     }
+
+    @Test
+    fun testGetAllValues() {
+        val context = activityRule.activity.applicationContext
+        val keyValueMap = mapOf("string" to "foo", "int" to "1", "boolean" to "true")
+
+        SecurePreferences.setValue(context, "string", keyValueMap.getValue("string"))
+        SecurePreferences.setValue(context, "int", keyValueMap.getValue("int").toInt())
+        SecurePreferences.setValue(context, "boolean", keyValueMap.getValue("boolean").toBoolean())
+
+        Assert.assertEquals(keyValueMap, SecurePreferences.getAll(context))
+
+        SecurePreferences.clearAllValues(context)
+    }
 }
