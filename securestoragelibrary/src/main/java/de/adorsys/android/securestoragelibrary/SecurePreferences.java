@@ -254,7 +254,8 @@ public final class SecurePreferences {
         SharedPreferences preferences = applicationContext
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         try {
-            return preferences.contains(key) && KeystoreTool.keyPairExists();
+            return (preferences.contains(key) || containsCollection(context, key))
+                    && KeystoreTool.keyPairExists();
         } catch (SecureStorageException e) {
             return false;
         }
@@ -335,6 +336,34 @@ public final class SecurePreferences {
         SharedPreferences preferences = context
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         preferences.edit().remove(key).apply();
+    }
+
+
+    /**
+     * Checks if SecureStorage contains a String Set value for the given key. Since sets are stored
+     * under multiple keys, this verifies that each expected key is present but does not verify the
+     * value types of those keys.
+     *
+     * @param context Context is used internally
+     * @param key     Key used to identify the stored value in SecureStorage
+     * @return True if the keys for the set value exist in SecureStorage, otherwise false
+     */
+    private static boolean containsCollection(@NonNull Context context,
+                                              @NonNull String key) {
+        Context applicationContext = context.getApplicationContext();
+        SharedPreferences preferences = applicationContext
+                .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+
+        int size = getIntValue(context, key + KEY_SET_COUNT_POSTFIX, -1);
+
+        if (size == -1) {
+            return false;
+        }
+
+        for (int i = 0; i < size; i++) {
+            if (!preferences.contains(key + "_" + i)) return false;
+        }
+        return true;
     }
 
     private static void clearAllSecureValues(@NonNull Context context) {
