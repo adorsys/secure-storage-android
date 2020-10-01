@@ -271,6 +271,7 @@ public final class SecurePreferences {
                                    @NonNull String key) {
         Context applicationContext = context.getApplicationContext();
         removeSecureValue(applicationContext, key);
+        removeSecureCollectionValue(applicationContext, key);
     }
 
     /**
@@ -338,6 +339,17 @@ public final class SecurePreferences {
         preferences.edit().remove(key).apply();
     }
 
+    private static void removeSecureCollectionValue(@NonNull Context context,
+                                          @NonNull String key) {
+        int size = getIntValue(context, key + KEY_SET_COUNT_POSTFIX, -1);
+
+        if (size != -1) {
+            for (int i = 0; i < size; i++) {
+                removeSecureValue(context, key + "_" + i);
+            }
+            removeSecureValue(context,key + KEY_SET_COUNT_POSTFIX);
+        }
+    }
 
     /**
      * Checks if SecureStorage contains a String Set value for the given key. Since sets are stored
