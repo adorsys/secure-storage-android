@@ -65,7 +65,7 @@ public final class SecurePreferences {
     }
 
     /**
-     * Takes plain string value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
+     * Takes plain boolean value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
      *
      * @param context Context is used internally
      * @param key     Key used to identify the stored value in SecureStorage
@@ -78,7 +78,7 @@ public final class SecurePreferences {
     }
 
     /**
-     * Takes plain string value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
+     * Takes plain float value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
      *
      * @param context Context is used internally
      * @param key     Key used to identify the stored value in SecureStorage
@@ -91,7 +91,7 @@ public final class SecurePreferences {
     }
 
     /**
-     * Takes plain string value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
+     * Takes plain long value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
      *
      * @param context Context is used internally
      * @param key     Key used to identify the stored value in SecureStorage
@@ -104,7 +104,7 @@ public final class SecurePreferences {
     }
 
     /**
-     * Takes plain string value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
+     * Takes plain int value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
      *
      * @param context Context is used internally
      * @param key     Key used to identify the stored value in SecureStorage
@@ -117,11 +117,11 @@ public final class SecurePreferences {
     }
 
     /**
-     * Takes plain string value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
+     * Takes plain Set&lt;String&gt; value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
      *
      * @param context Context is used internally
      * @param key     Key used to identify the stored value in SecureStorage
-     * @param value   Plain Set(type: String) value that will be encrypted and stored in the SecureStorage
+     * @param value   Plain Set&lt;String&gt; value that will be encrypted and stored in the SecureStorage
      */
     public static void setValue(@NonNull Context context,
                                 @NonNull String key,
