@@ -20,11 +20,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
 import static de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.CRYPTO_EXCEPTION;
@@ -126,12 +129,20 @@ public final class SecurePreferences {
     public static void setValue(@NonNull Context context,
                                 @NonNull String key,
                                 @NonNull Set<String> value) throws SecureStorageException {
-        setValue(context, key + KEY_SET_COUNT_POSTFIX, String.valueOf(value.size()));
+        setCollectionValue(context, key, value);
+    }
 
-        int i = 0;
-        for (String s : value) {
-            setValue(context, key + "_" + (i++), s);
-        }
+    /**
+     * Takes plain List&lt;String&gt; value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
+     *
+     * @param context Context is used internally
+     * @param key     Key used to identify the stored value in SecureStorage
+     * @param value   Plain List&lt;String&gt; value that will be encrypted and stored in the SecureStorage
+     */
+    public static void setValue(@NonNull Context context,
+                                @NonNull String key,
+                                @NonNull List<String> value) throws SecureStorageException {
+        setCollectionValue(context, key, value);
     }
 
     /**
@@ -216,29 +227,33 @@ public final class SecurePreferences {
     }
 
     /**
-     * Gets encrypted int value for given key  from the SecureStorage on the Android Device, decrypts it and returns it
+     * Gets encrypted Set&lt;String&gt; value for given key from the SecureStorage on the Android Device, decrypts it and returns it
      *
      * @param context  Context is used internally
      * @param key      Key used to identify the stored value in SecureStorage
      * @param defValue Default Set(type: String) value that will be returned if the value with given key doesn't exist or an exception is thrown
-     * @return Decrypted Set(type: String) value associated with given key from SecureStorage
+     * @return Decrypted Set&lt;String&gt; value associated with given key from SecureStorage
      */
     @NonNull
     public static Set<String> getStringSetValue(@NonNull Context context,
                                                 @NonNull String key,
                                                 @NonNull Set<String> defValue) {
-        int size = getIntValue(context, key + KEY_SET_COUNT_POSTFIX, -1);
+        return getStringCollectionValue(context, key, defValue, new LinkedHashSet<>());
+    }
 
-        if (size == -1) {
-            return defValue;
-        }
-
-        Set<String> res = new HashSet<>(size);
-        for (int i = 0; i < size; i++) {
-            res.add(getStringValue(context, key + "_" + i, ""));
-        }
-
-        return res;
+    /**
+     * Gets encrypted List&lt;String&gt; value for given key  from the SecureStorage on the Android Device, decrypts it and returns it
+     *
+     * @param context  Context is used internally
+     * @param key      Key used to identify the stored value in SecureStorage
+     * @param defValue Default List&lt;String&gt; value that will be returned if the value with given key doesn't exist or an exception is thrown
+     * @return Decrypted List&lt;String&gt; value associated with given key from SecureStorage
+     */
+    @NonNull
+    public static List<String> getStringListValue(@NonNull Context context,
+                                                @NonNull String key,
+                                                @NonNull List<String> defValue) {
+        return getStringCollectionValue(context, key, defValue, new ArrayList<>());
     }
 
     /**
@@ -324,12 +339,56 @@ public final class SecurePreferences {
         preferences.edit().putString(key, value).apply();
     }
 
+    /**
+     * Takes plain Collection&lt;String&gt; value, encrypts it and stores it encrypted in the SecureStorage on the Android Device
+     *
+     * @param context Context is used internally
+     * @param key     Key used to identify the stored value in SecureStorage
+     * @param value   Plain Collection&lt;String&gt; value that will be encrypted and stored in the SecureStorage
+     */
+    private static void setCollectionValue(@NonNull Context context,
+                                           @NonNull String key,
+                                           @NonNull Collection<String> value) throws SecureStorageException {
+        setValue(context, key + KEY_SET_COUNT_POSTFIX, String.valueOf(value.size()));
+
+        int i = 0;
+        for (String s : value) {
+            setValue(context, key + "_" + (i++), s);
+        }
+    }
+
     @Nullable
     private static String getSecureValue(@NonNull Context context,
                                          @NonNull String key) {
         SharedPreferences preferences = context
                 .getSharedPreferences(KEY_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         return preferences.getString(key, null);
+    }
+
+    /**
+     * Gets encrypted Collection&lt;String&gt; value for given key  from the SecureStorage on the Android Device, decrypts it and returns it
+     *
+     * @param context  Context is used internally
+     * @param key      Key used to identify the stored value in SecureStorage
+     * @param defValue Default Set(type: String) value that will be returned if the value with given key doesn't exist or an exception is thrown
+     * @return Decrypted Collection&lt;String&gt; value associated with given key from SecureStorage
+     */
+    @NonNull
+    private static <T extends Collection<String>> T getStringCollectionValue(@NonNull Context context,
+                                                                             @NonNull String key,
+                                                                             @NonNull T defValue,
+                                                                             @NonNull T retValue) {
+        int size = getIntValue(context, key + KEY_SET_COUNT_POSTFIX, -1);
+
+        if (size == -1) {
+            return defValue;
+        }
+
+        for (int i = 0; i < size; i++) {
+            retValue.add(getStringValue(context, key + "_" + i, ""));
+        }
+
+        return retValue;
     }
 
     private static void removeSecureValue(@NonNull Context context,
