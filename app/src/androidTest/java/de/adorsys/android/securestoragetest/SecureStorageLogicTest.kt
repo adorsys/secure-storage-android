@@ -52,6 +52,76 @@ open class SecureStorageLogicTest : SecureStorageBaseTest() {
     }
 
     @Test
+    fun testStoreRetrieveAndRemoveStringSetValue() {
+        val KEY_STRING_SET = "KEY_STRING_SET"
+        val VALUE_STRING_SET = setOf(
+            "The wheels on the \uD83D\uDE8C go, Round and round, Round and round, Round and round.",
+            "The wheels on the \uD83D\uDE8C go Round and round, All through the town. The doors on",
+            "the \uD83D\uDE8C go, Open and shut ♫, Open and shut ♫, Open and shut."
+        )
+        val context = activityRule.activity.applicationContext
+
+        // Store a String Set value in SecureStorage
+        SecurePreferences.setValue(context, KEY_STRING_SET, VALUE_STRING_SET)
+
+        // Check if the value exists in SecureStorage
+        Assert.assertTrue(SecurePreferences.contains(context, KEY_STRING_SET))
+
+        // Retrieve the previously stored String Set value from the SecureStorage
+        val retrievedValue: MutableSet<String> = SecurePreferences.getStringSetValue(context, KEY_STRING_SET, setOf())
+
+        // Check if the retrievedValue is not null
+        Assert.assertEquals(VALUE_STRING_SET.size, retrievedValue.size)
+
+        // Check if the retrievedValue equals the pre-stored value
+        Assert.assertEquals(VALUE_STRING_SET, retrievedValue)
+
+        // Remove the String Set value from SecureStorage
+        SecurePreferences.removeValue(context, KEY_STRING_SET)
+
+        // Check if the String Set value has been removed from SecureStorage
+        Assert.assertFalse(SecurePreferences.contains(context, KEY_STRING_SET))
+
+        // Delete keys and clear SecureStorage
+        SecurePreferences.clearAllValues(context)
+    }
+
+    @Test
+    fun testStoreRetrieveAndRemoveStringListValue() {
+        val KEY_STRING_LIST = "KEY_STRING_LIST"
+        val VALUE_STRING_LIST = listOf(
+            "The wheels on the \uD83D\uDE8C go, Round and round, Round and round, Round and round.",
+            "The wheels on the \uD83D\uDE8C go Round and round, All through the town. The doors on",
+            "the \uD83D\uDE8C go, Open and shut ♫, Open and shut ♫, Open and shut."
+        )
+        val context = activityRule.activity.applicationContext
+
+        // Store a String Set value in SecureStorage
+        SecurePreferences.setValue(context, KEY_STRING_LIST, VALUE_STRING_LIST)
+
+        // Check if the value exists in SecureStorage
+        Assert.assertTrue(SecurePreferences.contains(context, KEY_STRING_LIST))
+
+        // Retrieve the previously stored String Set value from the SecureStorage
+        val retrievedValue = SecurePreferences.getStringListValue(context, KEY_STRING_LIST, listOf())
+
+        // Check if the retrievedValue is not null
+        Assert.assertEquals(VALUE_STRING_LIST.size, retrievedValue.size)
+
+        // Check if the retrievedValue equals the pre-stored value
+        Assert.assertEquals(VALUE_STRING_LIST, retrievedValue)
+
+        // Remove the String Set value from SecureStorage
+        SecurePreferences.removeValue(context, KEY_STRING_LIST)
+
+        // Check if the String Set value has been removed from SecureStorage
+        Assert.assertFalse(SecurePreferences.contains(context, KEY_STRING_LIST))
+
+        // Delete keys and clear SecureStorage
+        SecurePreferences.clearAllValues(context)
+    }
+
+    @Test
     fun testStoreRetrieveAndRemoveBooleanValue() {
         val KEY_BOOLEAN = "KEY_BOOLEAN"
         val VALUE_BOOLEAN = true
