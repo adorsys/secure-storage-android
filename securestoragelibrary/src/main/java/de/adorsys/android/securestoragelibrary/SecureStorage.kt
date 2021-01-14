@@ -34,6 +34,7 @@ object SecureStorage {
     internal lateinit var SHARED_PREFERENCES_NAME: String
     internal lateinit var ENCRYPTION_KEY_ALIAS: String
     internal lateinit var X500PRINCIPAL: String
+    private var commitSynchronously: Boolean = false
 
     /**
      *
@@ -45,13 +46,16 @@ object SecureStorage {
      * (default value: CN=SecureStorage2 , O=Adorsys GmbH & Co. KG., C=Germany)
      */
     fun init(
-            context: Context,
-            encryptionKeyAlias: String? = null,
-            x500Principal: String? = null
+        context: Context,
+        commitSynchronously: Boolean = false,
+        encryptionKeyAlias: String? = null,
+        x500Principal: String? = null
     ) {
         SHARED_PREFERENCES_NAME = context.applicationContext.packageName + ".SecureStorage2"
         ENCRYPTION_KEY_ALIAS = encryptionKeyAlias ?: "SecureStorage2Key"
-        X500PRINCIPAL = x500Principal ?: "CN=SecureStorage2 , O=Adorsys GmbH & Co. KG., C=Germany"
+        X500PRINCIPAL =
+            x500Principal ?: "CN=SecureStorage2 , O=Adorsys GmbH & Co. KG., C=Germany"
+        this.commitSynchronously = commitSynchronously
     }
 
     /**
@@ -97,7 +101,7 @@ object SecureStorage {
      */
     @Throws(SecureStorageException::class)
     fun putBoolean(context: Context, key: String, value: Boolean) =
-            putString(context.applicationContext, key, value.toString())
+        putString(context.applicationContext, key, value.toString())
 
     /**
      *
@@ -109,7 +113,8 @@ object SecureStorage {
      *
      */
     @Throws(SecureStorageException::class)
-    fun putInt(context: Context, key: String, value: Int) = putString(context.applicationContext, key, value.toString())
+    fun putInt(context: Context, key: String, value: Int) =
+        putString(context.applicationContext, key, value.toString())
 
     /**
      *
@@ -122,7 +127,7 @@ object SecureStorage {
      */
     @Throws(SecureStorageException::class)
     fun putLong(context: Context, key: String, value: Long) =
-            putString(context.applicationContext, key, value.toString())
+        putString(context.applicationContext, key, value.toString())
 
     /**
      *
@@ -135,7 +140,7 @@ object SecureStorage {
      */
     @Throws(SecureStorageException::class)
     fun putDouble(context: Context, key: String, value: Double) =
-            putString(context.applicationContext, key, value.toString())
+        putString(context.applicationContext, key, value.toString())
 
     /**
      *
@@ -148,7 +153,7 @@ object SecureStorage {
      */
     @Throws(SecureStorageException::class)
     fun putFloat(context: Context, key: String, value: Float) =
-            putString(context.applicationContext, key, value.toString())
+        putString(context.applicationContext, key, value.toString())
 
     /**
      *
@@ -170,7 +175,8 @@ object SecureStorage {
         return when {
             encryptedValue.isNullOrBlank() -> defaultValue
             else -> {
-                val decryptedValue = KeyStoreTool.decryptValue(context.applicationContext, key, encryptedValue)
+                val decryptedValue =
+                    KeyStoreTool.decryptValue(context.applicationContext, key, encryptedValue)
                 when {
                     decryptedValue.isNullOrBlank() -> defaultValue
                     else -> decryptedValue
@@ -194,13 +200,13 @@ object SecureStorage {
      *
      */
     fun getBoolean(context: Context, key: String, defaultValue: Boolean?): Boolean =
-            parseBoolean(
-                    getString(
-                            context.applicationContext,
-                            key,
-                            defaultValue?.toString()
-                    )
+        parseBoolean(
+            getString(
+                context.applicationContext,
+                key,
+                defaultValue?.toString()
             )
+        )
 
     /**
      *
@@ -216,9 +222,9 @@ object SecureStorage {
      */
     fun getInt(context: Context, key: String, defaultValue: Int?): Int? {
         val retrievedValue = getString(
-                context.applicationContext,
-                key,
-                defaultValue?.toString()
+            context.applicationContext,
+            key,
+            defaultValue?.toString()
         )
         return when {
             retrievedValue.isNullOrBlank() -> defaultValue
@@ -240,9 +246,9 @@ object SecureStorage {
      */
     fun getLong(context: Context, key: String, defaultValue: Long?): Long? {
         val retrievedValue = getString(
-                context.applicationContext,
-                key,
-                defaultValue?.toString()
+            context.applicationContext,
+            key,
+            defaultValue?.toString()
         )
         return when {
             retrievedValue.isNullOrBlank() -> defaultValue
@@ -265,9 +271,9 @@ object SecureStorage {
      */
     fun getDouble(context: Context, key: String, defaultValue: Double?): Double? {
         val retrievedValue = getString(
-                context.applicationContext,
-                key,
-                defaultValue?.toString()
+            context.applicationContext,
+            key,
+            defaultValue?.toString()
         )
         return when {
             retrievedValue.isNullOrBlank() -> defaultValue
@@ -290,9 +296,9 @@ object SecureStorage {
      */
     fun getFloat(context: Context, key: String, defaultValue: Float?): Float? {
         val retrievedValue = getString(
-                context.applicationContext,
-                key,
-                defaultValue?.toString()
+            context.applicationContext,
+            key,
+            defaultValue?.toString()
         )
         return when {
             retrievedValue.isNullOrBlank() -> defaultValue
@@ -337,12 +343,16 @@ object SecureStorage {
      */
     @Throws(SecureStorageException::class)
     fun clearAllValues(context: Context) {
-        val apiVersionUnderMExisted = contains(context.applicationContext, KEY_INSTALLATION_API_VERSION_UNDER_M)
+        val apiVersionUnderMExisted =
+            contains(context.applicationContext, KEY_INSTALLATION_API_VERSION_UNDER_M)
 
         clearAllSecureValues(context.applicationContext)
 
         when {
-            apiVersionUnderMExisted -> KeyStoreTool.setInstallApiVersionFlag(context.applicationContext, true)
+            apiVersionUnderMExisted -> KeyStoreTool.setInstallApiVersionFlag(
+                context.applicationContext,
+                true
+            )
         }
     }
 
@@ -372,10 +382,12 @@ object SecureStorage {
      */
     @Throws(SecureStorageException::class)
     fun registerOnSecureStorageChangeListener(
-            context: Context,
-            listener: SharedPreferences.OnSharedPreferenceChangeListener
+        context: Context,
+        listener: SharedPreferences.OnSharedPreferenceChangeListener
     ) {
-        getSharedPreferencesInstance(context.applicationContext).registerOnSharedPreferenceChangeListener(listener)
+        getSharedPreferencesInstance(context.applicationContext).registerOnSharedPreferenceChangeListener(
+            listener
+        )
     }
 
     /**
@@ -388,39 +400,48 @@ object SecureStorage {
      */
     @Throws(SecureStorageException::class)
     fun unregisterOnSecureStorageChangeListener(
-            context: Context,
-            listener: SharedPreferences.OnSharedPreferenceChangeListener
+        context: Context,
+        listener: SharedPreferences.OnSharedPreferenceChangeListener
     ) {
-        getSharedPreferencesInstance(context.applicationContext).unregisterOnSharedPreferenceChangeListener(listener)
+        getSharedPreferencesInstance(context.applicationContext).unregisterOnSharedPreferenceChangeListener(
+            listener
+        )
     }
 
     internal fun getSharedPreferencesInstance(context: Context): SharedPreferences {
         return context.applicationContext.getSharedPreferences(
-                SHARED_PREFERENCES_NAME,
-                MODE_PRIVATE
+            SHARED_PREFERENCES_NAME,
+            MODE_PRIVATE
         )
     }
 
     @SuppressLint("CommitPrefEdits")
     private fun putSecureValue(context: Context, key: String, value: String) {
-        getSharedPreferencesInstance(context).edit().putString(key, value).execute()
+        getSharedPreferencesInstance(context).edit().putString(key, value)
+            .execute(commitSynchronously)
     }
 
     private fun getSecureValue(context: Context, key: String): String? =
-            getSharedPreferencesInstance(context).getString(key, null)
+        getSharedPreferencesInstance(context).getString(key, null)
 
     @SuppressLint("CommitPrefEdits")
     private fun removeSecureValue(context: Context, key: String) {
-        getSharedPreferencesInstance(context).edit().remove(key).execute()
+        getSharedPreferencesInstance(context).edit().remove(key)
+            .execute(commitSynchronously)
     }
 
-    private fun clearAllSecureValues(context: Context) = getSharedPreferencesInstance(context).edit().clear().execute()
+    private fun clearAllSecureValues(context: Context) =
+        getSharedPreferencesInstance(context).edit().clear()
+            .execute(commitSynchronously)
 }
 
 //================================================================================
 // SecureStorage Extension Function
 //================================================================================
 
-internal fun SharedPreferences.Editor.execute() {
-    apply()
+internal fun SharedPreferences.Editor.execute(commitSynchronously: Boolean) {
+    when {
+        commitSynchronously -> commit()
+        else -> apply()
+    }
 }
