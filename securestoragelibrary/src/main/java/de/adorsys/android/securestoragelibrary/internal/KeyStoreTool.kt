@@ -25,8 +25,8 @@ import android.view.View.LAYOUT_DIRECTION_RTL
 import de.adorsys.android.securestoragelibrary.SecureStorage
 import de.adorsys.android.securestoragelibrary.SecureStorage.KEY_INSTALLATION_API_VERSION_UNDER_M
 import de.adorsys.android.securestoragelibrary.SecureStorageException
-import de.adorsys.android.securestoragelibrary.execute
 import de.adorsys.android.securestoragelibrary.SecureStorageException.ExceptionType.KEYSTORE_EXCEPTION
+import de.adorsys.android.securestoragelibrary.execute
 import java.security.KeyStore
 import java.util.*
 import javax.crypto.Cipher
@@ -66,26 +66,38 @@ internal object KeyStoreTool {
     internal fun encryptValue(context: Context, key: String, value: String): String {
         return when {
             apiVersionMAndAbove(context) -> KeyStoreToolApi23.encryptValue(
-                    context,
-                    getKeyStoreInstance(),
-                    getCipher(context),
-                    key,
-                    value
+                context,
+                getKeyStoreInstance(),
+                getCipher(context),
+                key,
+                value
             )
-            else -> KeyStoreToolApi21.encryptValue(context, getKeyStoreInstance(), getCipher(context), key, value)
+            else -> KeyStoreToolApi21.encryptValue(
+                context,
+                getKeyStoreInstance(),
+                getCipher(context),
+                key,
+                value
+            )
         }
     }
 
-    internal fun decryptValue(context: Context, key: String, value: String): String? {
+    internal fun decryptValue(context: Context, key: String, value: String): String {
         return when {
             apiVersionMAndAbove(context) -> KeyStoreToolApi23.decryptValue(
-                    context,
-                    getKeyStoreInstance(),
-                    getCipher(context),
-                    key,
-                    value
+                context,
+                getKeyStoreInstance(),
+                getCipher(context),
+                key,
+                value
             )
-            else -> KeyStoreToolApi21.decryptValue(context, getKeyStoreInstance(), getCipher(context), key, value)
+            else -> KeyStoreToolApi21.decryptValue(
+                context,
+                getKeyStoreInstance(),
+                getCipher(context),
+                key,
+                value
+            )
         }
     }
 
@@ -97,24 +109,31 @@ internal object KeyStoreTool {
     }
 
     @SuppressLint("CommitPrefEdits")
-    internal fun setInstallApiVersionFlag(context: Context, forceSet: Boolean = false) {
+    internal fun setInstallApiVersionFlag(
+        context: Context,
+        forceSet: Boolean = false,
+        commitSynchronously: Boolean = false
+    ) {
         val preferences = SecureStorage.getSharedPreferencesInstance(context)
 
         when {
             forceSet -> {
                 SecureStorage.getSharedPreferencesInstance(context).edit()
-                        .putBoolean(KEY_INSTALLATION_API_VERSION_UNDER_M, true).execute()
+                    .putBoolean(KEY_INSTALLATION_API_VERSION_UNDER_M, true)
+                    .execute(commitSynchronously)
                 return
             }
             else -> {
-                val installationApiVersionUnderM = preferences.contains(KEY_INSTALLATION_API_VERSION_UNDER_M)
+                val installationApiVersionUnderM =
+                    preferences.contains(KEY_INSTALLATION_API_VERSION_UNDER_M)
 
                 when {
                     Build.VERSION.SDK_INT < Build.VERSION_CODES.M
                             && !installationApiVersionUnderM -> SecureStorage.getSharedPreferencesInstance(
-                            context
+                        context
                     ).edit()
-                            .putBoolean(KEY_INSTALLATION_API_VERSION_UNDER_M, true).execute()
+                        .putBoolean(KEY_INSTALLATION_API_VERSION_UNDER_M, true)
+                        .execute(commitSynchronously)
                 }
             }
         }
@@ -122,7 +141,8 @@ internal object KeyStoreTool {
 
     internal fun apiVersionMAndAbove(context: Context): Boolean {
         val installationApiVersionUnderM =
-                SecureStorage.getSharedPreferencesInstance(context).contains(KEY_INSTALLATION_API_VERSION_UNDER_M)
+            SecureStorage.getSharedPreferencesInstance(context)
+                .contains(KEY_INSTALLATION_API_VERSION_UNDER_M)
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !installationApiVersionUnderM
     }
 
@@ -139,10 +159,10 @@ internal object KeyStoreTool {
             return keyStore
         } catch (e: Exception) {
             throw SecureStorageException(
-                    if (!e.message.isNullOrBlank()) e.message!!
-                    else SecureStorageException.MESSAGE_ERROR_WHILE_GETTING_KEYSTORE_INSTANCE,
-                    e,
-                    KEYSTORE_EXCEPTION
+                if (!e.message.isNullOrBlank()) e.message!!
+                else SecureStorageException.MESSAGE_ERROR_WHILE_GETTING_KEYSTORE_INSTANCE,
+                e,
+                KEYSTORE_EXCEPTION
             )
         }
     }
@@ -152,12 +172,14 @@ internal object KeyStoreTool {
         getKeyStoreInstance()
 
         return when {
-            apiVersionMAndAbove(context) -> Cipher.getInstance(KEY_SYMMETRIC_TRANSFORMATION_ALGORITHM)
+            apiVersionMAndAbove(context) -> Cipher.getInstance(
+                KEY_SYMMETRIC_TRANSFORMATION_ALGORITHM
+            )
             else -> // https://stackoverflow.com/a/36394097/3392276
                 Cipher.getInstance(KEY_ASYMMETRIC_TRANSFORMATION_ALGORITHM)
         }
     }
 
     private fun isRTL(context: Context): Boolean =
-            context.resources.configuration.layoutDirection == LAYOUT_DIRECTION_RTL
+        context.resources.configuration.layoutDirection == LAYOUT_DIRECTION_RTL
 }
