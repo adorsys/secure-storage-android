@@ -439,7 +439,7 @@ object SecureStorage {
 // SecureStorage Extension Function
 //================================================================================
 
-internal fun SharedPreferences.Editor.execute(commitSynchronously: Boolean) {
+internal fun SharedPreferences.Editor.execute(commitSynchronously: Boolean = false) {
     when {
         commitSynchronously -> commit()
         else -> apply()

@@ -112,7 +112,6 @@ internal object KeyStoreTool {
     internal fun setInstallApiVersionFlag(
         context: Context,
         forceSet: Boolean = false,
-        commitSynchronously: Boolean = false
     ) {
         val preferences = SecureStorage.getSharedPreferencesInstance(context)
 
@@ -120,7 +119,7 @@ internal object KeyStoreTool {
             forceSet -> {
                 SecureStorage.getSharedPreferencesInstance(context).edit()
                     .putBoolean(KEY_INSTALLATION_API_VERSION_UNDER_M, true)
-                    .execute(commitSynchronously)
+                    .execute()
                 return
             }
             else -> {
@@ -133,7 +132,7 @@ internal object KeyStoreTool {
                         context
                     ).edit()
                         .putBoolean(KEY_INSTALLATION_API_VERSION_UNDER_M, true)
-                        .execute(commitSynchronously)
+                        .execute()
                 }
             }
         }

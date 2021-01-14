@@ -62,9 +62,9 @@ internal object KeyStoreToolApi21 {
     // We have to suppress the lint warning even though .apply or .commit is used in .execute() extension function
     @SuppressLint("CommitPrefEdits")
     @Throws(SecureStorageException::class)
-    internal fun deleteKey(context: Context, keyStoreInstance: KeyStore, commitSynchronously: Boolean = false) {
+    internal fun deleteKey(context: Context, keyStoreInstance: KeyStore) {
         // Delete Symmetric Key from SecureStorage
-        SecureStorage.getSharedPreferencesInstance(context).edit().clear().execute(commitSynchronously)
+        SecureStorage.getSharedPreferencesInstance(context).edit().clear().execute()
 
         // Delete Asymmetric KeyPair from Keystore
         when {
@@ -193,7 +193,6 @@ internal object KeyStoreToolApi21 {
         cipher: Cipher,
         keyValueKey: String,
         aesKey: String,
-        commitSynchronously: Boolean = false,
     ) {
         val publicKey = getPublicKey(keyStoreInstance)
 
@@ -202,7 +201,7 @@ internal object KeyStoreToolApi21 {
         val bytes = cipher.doFinal(aesKey.toByteArray())
 
         SecureStorage.getSharedPreferencesInstance(context).edit()
-            .putString(keyValueKey, Base64.encodeToString(bytes, Base64.DEFAULT)).execute(commitSynchronously)
+            .putString(keyValueKey, Base64.encodeToString(bytes, Base64.DEFAULT)).execute()
     }
 
     private fun getAesKeyPart(
